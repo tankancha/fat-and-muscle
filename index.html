@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fat &amp; Muscle Campaign 2026</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:Arial,Helvetica,sans-serif;background:#0F172A;color:#F1F5F9;min-height:100vh;padding:0;}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,#0F172A 0%,#1E3A5F 50%,#0F172A 100%);padding:48px 24px 40px;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(99,102,241,.12),transparent);}
+  .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6366F1;margin-bottom:14px;position:relative;}
+  .hero h1{font-size:clamp(24px,5vw,40px);font-weight:900;color:#fff;line-height:1.15;position:relative;margin-bottom:10px;}
+  .hero h1 span{color:#6366F1;}
+  .hero-sub{font-size:13px;color:#94A3B8;max-width:480px;margin:0 auto 28px;position:relative;line-height:1.6;}
+
+  /* STAT STRIP */
+  .stat-strip{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;position:relative;margin-bottom:0;}
+  .stat-chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 16px;text-align:center;min-width:90px;}
+  .stat-chip .sv{font-size:20px;font-weight:900;color:#fff;line-height:1;}
+  .stat-chip .sl{font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:.6px;margin-top:3px;}
+  .stat-chip.green .sv{color:#22C55E;}
+  .stat-chip.blue .sv{color:#60A5FA;}
+  .stat-chip.purple .sv{color:#A855F7;}
+
+  /* TIMELINE */
+  .timeline-bar{display:flex;justify-content:center;align-items:center;gap:0;flex-wrap:nowrap;overflow-x:auto;padding:22px 24px 0;scrollbar-width:none;}
+  .timeline-bar::-webkit-scrollbar{display:none;}
+  .tl-dot{display:flex;flex-direction:column;align-items:center;position:relative;min-width:80px;}
+  .tl-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;position:relative;z-index:1;}
+  .tl-label{font-size:9px;font-weight:700;color:#94A3B8;margin-top:6px;text-align:center;line-height:1.3;}
+  .tl-date{font-size:8px;color:#475569;margin-top:2px;text-align:center;}
+  .tl-line{flex:1;height:2px;background:rgba(255,255,255,.1);min-width:24px;margin-bottom:28px;}
+  .tl-line.done{background:linear-gradient(90deg,#6366F1,#A855F7);}
+
+  /* MAIN CARDS */
+  .cards-section{padding:32px 24px;max-width:900px;margin:0 auto;}
+  .section-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#475569;text-align:center;margin-bottom:18px;}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:600px){.cards{grid-template-columns:1fr;}}
+
+  .card{background:linear-gradient(135deg,#1E293B,#0F172A);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 24px;text-decoration:none;color:inherit;display:block;transition:transform .18s,box-shadow .18s,border-color .18s;position:relative;overflow:hidden;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.5);border-color:rgba(99,102,241,.4);}
+  .card-icon{font-size:32px;margin-bottom:14px;}
+  .card-title{font-size:18px;font-weight:900;color:#fff;margin-bottom:6px;}
+  .card-desc{font-size:12px;color:#94A3B8;line-height:1.6;margin-bottom:18px;}
+  .card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+  .card-tag{font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.3px;}
+  .card-cta{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:8px 16px;border-radius:8px;text-transform:uppercase;letter-spacing:.5px;}
+  .card-glow{position:absolute;top:0;left:0;right:0;height:2px;border-radius:16px 16px 0 0;}
+
+  .card-progress .card-glow{background:linear-gradient(90deg,#6366F1,#8B5CF6);}
+  .card-progress .card-cta{background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;}
+  .card-progress .card-tag{background:rgba(99,102,241,.15);color:#818CF8;border:1px solid rgba(99,102,241,.3);}
+
+  .card-leaderboard .card-glow{background:linear-gradient(90deg,#F59E0B,#EF4444);}
+  .card-leaderboard .card-cta{background:linear-gradient(135deg,#F59E0B,#EF4444);color:#fff;}
+  .card-leaderboard .card-tag{background:rgba(245,158,11,.15);color:#FCD34D;border:1px solid rgba(245,158,11,.3);}
+
+  /* PARTICIPANTS */
+  .participants-section{padding:0 24px 32px;max-width:900px;margin:0 auto;}
+  .participants-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .participant-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:6px 11px;font-size:11px;color:#CBD5E1;}
+  .participant-chip .av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;flex-shrink:0;}
+  .participant-chip.completed{border-color:rgba(34,197,94,.25);background:rgba(34,197,94,.05);}
+  .participant-chip.completed .av{box-shadow:0 0 0 2px rgba(34,197,94,.4);}
+
+  /* FOOTER */
+  .footer{text-align:center;font-size:10px;color:#334155;padding:20px 24px 32px;border-top:1px solid rgba(255,255,255,.06);}
+  .footer a{color:#475569;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">Body Composition Campaign · 2026</div>
+  <h1>Fat &amp; <span>Muscle</span> Challenge</h1>
+  <p class="hero-sub">14 participants · 4 rounds of progress tracking · Mija Body Composition Scale 5400</p>
+
+  <div class="stat-strip">
+    <div class="stat-chip"><div class="sv">14</div><div class="sl">Participants</div></div>
+    <div class="stat-chip"><div class="sv">4</div><div class="sl">Rounds</div></div>
+    <div class="stat-chip green"><div class="sv">−0.94pp</div><div class="sl">Avg Fat Δ R4</div></div>
+    <div class="stat-chip blue"><div class="sv">+0.93pp</div><div class="sl">Avg Muscle Δ R4</div></div>
+    <div class="stat-chip purple"><div class="sv">11</div><div class="sl">Measured R4</div></div>
+  </div>
+
+  <div class="timeline-bar">
+    <div class="tl-dot">
+      <div class="tl-circle" style="background:#475569">B</div>
+      <div class="tl-label">Baseline</div>
+      <div class="tl-date">16 Mar</div>
+    </div>
+    <div class="tl-line done"></div>
+    <div class="tl-dot">
+      <div class="tl-circle" style="background:#F59E0B">1</div>
+      <div class="tl-label">Round 1</div>
+      <div class="tl-date">31 Mar</div>
+    </div>
+    <div class="tl-line done"></div>
+    <div class="tl-dot">
+      <div class="tl-circle" style="background:#60A5FA">2</div>
+      <div class="tl-label">Round 2</div>
+      <div class="tl-date">20 Apr</div>
+    </div>
+    <div class="tl-line done"></div>
+    <div class="tl-dot">
+      <div class="tl-circle" style="background:#22C55E">3</div>
+      <div class="tl-label">Round 3</div>
+      <div class="tl-date">5 May</div>
+    </div>
+    <div class="tl-line done"></div>
+    <div class="tl-dot">
+      <div class="tl-circle" style="background:#A855F7;box-shadow:0 0 12px rgba(168,85,247,.6)">4</div>
+      <div class="tl-label" style="color:#C084FC;font-weight:800;">Round 4 ✨</div>
+      <div class="tl-date" style="color:#7C3AED;">19 May</div>
+    </div>
+  </div>
+</div>
+
+<div class="cards-section">
+  <div class="section-label">Explore the Data</div>
+  <div class="cards">
+
+    <a href="progress.html" class="card card-progress">
+      <div class="card-glow"></div>
+      <div class="card-icon">📊</div>
+      <div class="card-title">Progress Tracker</div>
+      <div class="card-desc">Individual body composition charts for each participant — body fat % and muscle % across all rounds with trend bars.</div>
+      <div class="card-meta">
+        <div class="card-tag">14 Members</div>
+        <div class="card-tag">BF% Trends</div>
+        <div class="card-tag">Muscle% Trends</div>
+        <div class="card-tag">Round-by-Round</div>
+      </div>
+      <div class="card-cta">View Progress →</div>
+    </a>
+
+    <a href="leaderboard.html" class="card card-leaderboard">
+      <div class="card-glow"></div>
+      <div class="card-icon">🏆</div>
+      <div class="card-title">Leaderboard</div>
+      <div class="card-desc">Rankings for every round — improvement vs previous measurement and cumulative change vs baseline. Podium, scores, and full ranking tables.</div>
+      <div class="card-meta">
+        <div class="card-tag">4 Rounds</div>
+        <div class="card-tag">vs Baseline</div>
+        <div class="card-tag">vs Previous</div>
+        <div class="card-tag">Podium</div>
+      </div>
+      <div class="card-cta">View Rankings →</div>
+    </a>
+
+  </div>
+</div>
+
+<div class="participants-section">
+  <div class="section-label" style="margin-bottom:14px;">Participants</div>
+  <div class="participants-grid" id="chips"></div>
+</div>
+
+<div class="footer">
+  Campaign: 16 Mar – 19 May 2026 &nbsp;·&nbsp; Mija Body Composition Scale 5400 &nbsp;·&nbsp; <a href="https://github.com/tankancha/fat-and-muscle">GitHub</a>
+</div>
+
+<script>
+const COLORS=['#6366F1','#EC4899','#14B8A6','#F59E0B','#8B5CF6','#10B981','#EF4444','#3B82F6','#F97316','#06B6D4','#84CC16','#A855F7','#22D3EE','#FB923C'];
+const ALL=['Ann','Ben','Best','Bob','Jue','Maneenund','Nott','Ohm','Orawan','Pipat','Piyathida','Pruang','Sonny','Wason'];
+const R4measured=new Set(['Ben','Best','Bob','Jue','Maneenund','Nott','Orawan','Pipat','Piyathida','Pruang','Wason']);
+const chips=document.getElementById('chips');
+ALL.forEach((n,i)=>{
+  const done=R4measured.has(n);
+  const av=n.substring(0,2).toUpperCase();
+  chips.innerHTML+=`<div class="participant-chip${done?' completed':''}"><div class="av" style="background:${COLORS[i]}">${av}</div>${n}${done?' ✓':''}</div>`;
+});
+</script>
+</body>
+</html>

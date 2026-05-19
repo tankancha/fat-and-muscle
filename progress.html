@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fat &amp; Muscle Campaign — Progress Report</title>
+<style>
+  :root {
+    --fat:#EF4444;--bg:#F1F5F9;--card:#FFFFFF;--text:#1E293B;--sub:#64748B;--border:#E2E8F0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);padding:24px 18px;}
+  .page-header{background:linear-gradient(135deg,#0F172A,#1E3A5F);border-radius:16px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .page-header h1{font-size:20px;font-weight:800;color:#fff;}
+  .page-header p{font-size:11px;color:#94A3B8;margin-top:4px;}
+  .header-dates{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;}
+  .date-badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:9px;padding:8px 13px;text-align:center;}
+  .date-badge.r4{background:rgba(168,85,247,.18);border-color:rgba(168,85,247,.5);}
+  .date-badge .lb{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:.6px;}
+  .date-badge .vl{font-size:11px;font-weight:700;color:#fff;margin-top:2px;}
+  .summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+  .sc{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+  .sc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sub);}
+  .sc-val{font-size:24px;font-weight:800;margin:4px 0 2px;}
+  .sc-sub{font-size:10px;color:var(--sub);}
+  .sc-gray .sc-val{color:var(--sub);}
+  .sc-green .sc-val{color:#22C55E;}
+  .sc-fat .sc-val{color:#EF4444;}
+  .sc-muscle .sc-val{color:#3B82F6;}
+  .legend{display:flex;gap:16px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--sub);}
+  .lswatch{width:14px;height:10px;border-radius:2px;}
+  .avg-panel{background:linear-gradient(135deg,#0F172A,#1E3A5F);border-radius:14px;padding:20px 24px;margin-bottom:20px;}
+  .avg-panel h2{font-size:13px;font-weight:800;color:#fff;margin-bottom:14px;}
+  .avg-rounds{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .avg-round-title{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#94A3B8;margin-bottom:10px;font-weight:700;}
+  .avg-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .avg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .avg-lbl{font-size:10px;color:#94A3B8;width:76px;flex-shrink:0;}
+  .avg-val{font-size:12px;font-weight:700;color:#fff;}
+  .avg-delta{font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;margin-left:auto;}
+  .avg-bar-wrap{height:4px;border-radius:3px;margin-bottom:8px;}
+  .avg-bar-fill{height:100%;border-radius:3px;}
+  .section-title{font-size:12px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px;}
+  .section-title span{font-size:10px;font-weight:400;text-transform:none;color:var(--sub);letter-spacing:0;}
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;margin-bottom:24px;}
+  .person-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px 20px;}
+  .person-card:hover{box-shadow:0 4px 18px rgba(0,0,0,.08);}
+  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .card-identity{display:flex;align-items:center;gap:9px;}
+  .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
+  .name-text h3{font-size:13px;font-weight:700;}
+  .name-text p{font-size:10px;color:var(--sub);margin-top:1px;}
+  .badge{font-size:9px;font-weight:700;padding:3px 9px;border-radius:16px;white-space:nowrap;}
+  .badge-improved{background:#DCFCE7;color:#15803D;}
+  .badge-declined{background:#FEE2E2;color:#B91C1C;}
+  .badge-mixed{background:#FEF9C3;color:#92400E;}
+  .badge-skip{background:#F1F5F9;color:#64748B;}
+  .chart-section{margin-top:2px;}
+  .chart-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--sub);margin-bottom:8px;}
+  .bar-chart{display:flex;flex-direction:column;gap:7px;}
+  .bar-row{display:flex;align-items:center;gap:8px;}
+  .bar-row-label{font-size:9px;color:var(--sub);width:58px;flex-shrink:0;text-align:right;}
+  .bar-outer{flex:1;background:#F1F5F9;border-radius:4px;height:18px;position:relative;overflow:hidden;}
+  .bar-inner{height:100%;border-radius:4px;position:relative;display:flex;align-items:center;}
+  .bar-value{position:absolute;right:6px;font-size:9px;font-weight:700;color:#fff;white-space:nowrap;}
+  .delta-tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:5px;flex-shrink:0;width:52px;text-align:center;}
+  .dt-gf{background:#DCFCE7;color:#15803D;}
+  .dt-bf{background:#FEE2E2;color:#B91C1C;}
+  .dt-gm{background:#DBEAFE;color:#1D4ED8;}
+  .dt-bm{background:#FEE2E2;color:#B91C1C;}
+  .dt-n{background:#F1F5F9;color:#94A3B8;}
+  .chart-divider{border:none;border-top:1px dashed #E2E8F0;margin:10px 0;}
+  .skip-note{background:#FFF7ED;border:1px solid #FDE68A;border-radius:7px;padding:7px 11px;font-size:10px;color:#92400E;margin-top:10px;}
+  .missed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:24px;}
+  .missed-card{background:#fff;border:1px dashed #CBD5E1;border-radius:12px;padding:14px 16px;opacity:.75;}
+  .footer{text-align:center;font-size:10px;color:#94A3B8;padding-top:12px;border-top:1px solid var(--border);}
+  @media(max-width:640px){.summary-strip{grid-template-columns:1fr 1fr;}.avg-rounds{grid-template-columns:1fr;}.cards-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>🏋️ Fat &amp; Muscle Campaign — Progress Report</h1>
+    <p>Body composition tracking · Mija Body Composition Scale 5400 · Changes shown vs baseline per measurement round</p>
+  </div>
+  <div class="header-dates">
+    <div class="date-badge"><div class="lb">Baseline</div><div class="vl">16 Mar 2026</div></div>
+    <div class="date-badge"><div class="lb">Round 1</div><div class="vl">31 Mar–1 Apr</div></div>
+    <div class="date-badge"><div class="lb">Round 2</div><div class="vl">20 Apr 2026</div></div>
+    <div class="date-badge"><div class="lb">Round 3</div><div class="vl">5 May 2026</div></div>
+    <div class="date-badge r4"><div class="lb">Round 4 ✨</div><div class="vl">19 May 2026</div></div>
+    <div class="date-badge"><div class="lb">Duration</div><div class="vl">~9 weeks</div></div>
+  </div>
+</div>
+
+<div class="summary-strip">
+  <div class="sc sc-gray"><div class="sc-label">Total Enrolled</div><div class="sc-val">14</div><div class="sc-sub">Baseline participants</div></div>
+  <div class="sc sc-green"><div class="sc-label">Round 4 Measured</div><div class="sc-val">11</div><div class="sc-sub">19 May 2026 · 3 absent</div></div>
+  <div class="sc sc-fat"><div class="sc-label">Avg Body Fat Δ R4</div><div class="sc-val">−0.94 pp</div><div class="sc-sub">vs baseline · 11 pax</div></div>
+  <div class="sc sc-muscle"><div class="sc-label">Avg Muscle Δ R4</div><div class="sc-val">+0.93 pp</div><div class="sc-sub">vs baseline · 11 pax</div></div>
+</div>
+
+<div class="legend">
+  <strong style="font-size:11px;color:#1E293B">Chart legend:</strong>
+  <div class="legend-item"><div class="lswatch" style="background:#94A3B8"></div>Baseline</div>
+  <div class="legend-item"><div class="lswatch" style="background:#F87171"></div>R1 Body Fat</div>
+  <div class="legend-item"><div class="lswatch" style="background:#EF4444"></div>R2 Body Fat</div>
+  <div class="legend-item"><div class="lswatch" style="background:#B91C1C"></div>R3 Body Fat</div>
+  <div class="legend-item"><div class="lswatch" style="background:#7F1D1D"></div>R4 Body Fat</div>
+  <div class="legend-item"><div class="lswatch" style="background:#60A5FA"></div>R1 Muscle</div>
+  <div class="legend-item"><div class="lswatch" style="background:#3B82F6"></div>R2 Muscle</div>
+  <div class="legend-item"><div class="lswatch" style="background:#1D4ED8"></div>R3 Muscle</div>
+  <div class="legend-item"><div class="lswatch" style="background:#1E3A8A"></div>R4 Muscle</div>
+  <div class="legend-item"><div class="lswatch" style="background:#22C55E"></div>Δ improved</div>
+  <div class="legend-item"><div class="lswatch" style="background:#EF4444"></div>Δ regressed</div>
+</div>
+
+<div class="avg-panel">
+  <h2>📊 Group Averages — Round by Round (baseline participants only)</h2>
+  <div class="avg-rounds">
+    <div>
+      <div class="avg-round-title">🔵 Round 1 · 31 Mar–1 Apr (11 pax)</div>
+      <div class="avg-row"><div class="avg-dot" style="background:#94A3B8"></div><div class="avg-lbl">Base Fat</div><div class="avg-val">28.10%</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(239,68,68,.15)"><div class="avg-bar-fill" style="width:56.2%;background:#94A3B8"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#F87171"></div><div class="avg-lbl">R1 Fat</div><div class="avg-val">28.05%</div><div class="avg-delta" style="background:rgba(34,197,94,.2);color:#16A34A">−0.05 pp</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(239,68,68,.15);margin-bottom:12px"><div class="avg-bar-fill" style="width:56.1%;background:#F87171"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#94A3B8"></div><div class="avg-lbl">Base Muscle</div><div class="avg-val">67.92%</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(59,130,246,.15)"><div class="avg-bar-fill" style="width:67.9%;background:#94A3B8"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#60A5FA"></div><div class="avg-lbl">R1 Muscle</div><div class="avg-val">68.01%</div><div class="avg-delta" style="background:rgba(59,130,246,.2);color:#60A5FA">+0.09 pp</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(59,130,246,.15)"><div class="avg-bar-fill" style="width:68.0%;background:#60A5FA"></div></div>
+    </div>
+    <div>
+      <div class="avg-round-title">🟢 Round 2 · 20 Apr (14 pax)</div>
+      <div class="avg-row"><div class="avg-dot" style="background:#94A3B8"></div><div class="avg-lbl">Base Fat</div><div class="avg-val">28.10%</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(239,68,68,.15)"><div class="avg-bar-fill" style="width:56.2%;background:#94A3B8"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#EF4444"></div><div class="avg-lbl">R2 Fat</div><div class="avg-val">27.59%</div><div class="avg-delta" style="background:rgba(34,197,94,.2);color:#16A34A">−0.51 pp</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(239,68,68,.15);margin-bottom:12px"><div class="avg-bar-fill" style="width:55.2%;background:#EF4444"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#94A3B8"></div><div class="avg-lbl">Base Muscle</div><div class="avg-val">67.96%</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(59,130,246,.15)"><div class="avg-bar-fill" style="width:68.0%;background:#94A3B8"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#3B82F6"></div><div class="avg-lbl">R2 Muscle</div><div class="avg-val">68.44%</div><div class="avg-delta" style="background:rgba(59,130,246,.2);color:#60A5FA">+0.48 pp</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(59,130,246,.15)"><div class="avg-bar-fill" style="width:68.4%;background:#3B82F6"></div></div>
+    </div>
+    <div>
+      <div class="avg-round-title">⚡ Round 3 · 5 May (13 pax)</div>
+      <div class="avg-row"><div class="avg-dot" style="background:#94A3B8"></div><div class="avg-lbl">Base Fat</div><div class="avg-val">28.20%</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(239,68,68,.15)"><div class="avg-bar-fill" style="width:56.4%;background:#94A3B8"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#B91C1C"></div><div class="avg-lbl">R3 Fat</div><div class="avg-val">27.59%</div><div class="avg-delta" style="background:rgba(34,197,94,.2);color:#16A34A">−0.61 pp</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(239,68,68,.15);margin-bottom:12px"><div class="avg-bar-fill" style="width:55.2%;background:#B91C1C"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#94A3B8"></div><div class="avg-lbl">Base Muscle</div><div class="avg-val">67.85%</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(59,130,246,.15)"><div class="avg-bar-fill" style="width:67.9%;background:#94A3B8"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#1D4ED8"></div><div class="avg-lbl">R3 Muscle</div><div class="avg-val">68.48%</div><div class="avg-delta" style="background:rgba(29,78,216,.2);color:#1D4ED8">+0.63 pp</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(59,130,246,.15)"><div class="avg-bar-fill" style="width:68.5%;background:#1D4ED8"></div></div>
+    </div>
+    <div>
+      <div class="avg-round-title">✨ Round 4 · 19 May (11 pax)</div>
+      <div class="avg-row"><div class="avg-dot" style="background:#94A3B8"></div><div class="avg-lbl">Base Fat</div><div class="avg-val">28.26%</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(239,68,68,.15)"><div class="avg-bar-fill" style="width:56.5%;background:#94A3B8"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#7F1D1D"></div><div class="avg-lbl">R4 Fat</div><div class="avg-val">27.32%</div><div class="avg-delta" style="background:rgba(34,197,94,.2);color:#16A34A">−0.94 pp</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(239,68,68,.15);margin-bottom:12px"><div class="avg-bar-fill" style="width:54.6%;background:#7F1D1D"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#94A3B8"></div><div class="avg-lbl">Base Muscle</div><div class="avg-val">67.80%</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(59,130,246,.15)"><div class="avg-bar-fill" style="width:67.8%;background:#94A3B8"></div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:#1E3A8A"></div><div class="avg-lbl">R4 Muscle</div><div class="avg-val">68.73%</div><div class="avg-delta" style="background:rgba(30,58,138,.2);color:#1E3A8A">+0.93 pp</div></div>
+      <div class="avg-bar-wrap" style="background:rgba(59,130,246,.15)"><div class="avg-bar-fill" style="width:68.7%;background:#1E3A8A"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-title">✨ Round 4 Measured <span>— 11 participants · 19 May 2026</span></div>
+<div class="cards-grid" id="cards-r4"></div>
+
+<div class="section-title">⏳ Absent Round 4 <span>— not measured on 19 May 2026</span></div>
+<div class="missed-grid" id="cards-pending"></div>
+
+<div class="footer">Data source: Mija Body Composition Scale 5400 &nbsp;·&nbsp; Campaign: 16 Mar – 19 May 2026 &nbsp;·&nbsp; Generated 19 May 2026</div>
+
+<script>
+const COLORS=['#6366F1','#EC4899','#14B8A6','#F59E0B','#8B5CF6','#10B981','#EF4444','#3B82F6','#F97316','#06B6D4','#84CC16','#A855F7','#22D3EE','#FB923C'];
+const allNames=['Ann','Ben','Best','Bob','Jue','Maneenund','Nott','Ohm','Orawan','Pipat','Piyathida','Pruang','Sonny','Wason'];
+const colorMap={};
+allNames.forEach((n,i)=>colorMap[n]=COLORS[i%COLORS.length]);
+
+const base={
+  Ann:{bf:24.5,mu:71.4},Ben:{bf:27.4,mu:68.6},Best:{bf:26.7,mu:69.5},
+  Bob:{bf:32.7,mu:63.7},Jue:{bf:29.2,mu:67.0},Maneenund:{bf:39.6,mu:56.8},
+  Nott:{bf:23.3,mu:72.6},Ohm:{bf:36.9,mu:59.7},Orawan:{bf:37.6,mu:58.6},
+  Pipat:{bf:21.9,mu:73.9},Piyathida:{bf:22.75,mu:72.8},Pruang:{bf:19.6,mu:76.1},
+  Sonny:{bf:21.15,mu:74.55},Wason:{bf:30.1,mu:66.2},
+};
+const prog1={
+  Ann:{bf:24.7,mu:71.4},Bob:{bf:32.6,mu:63.9},Jue:{bf:28.8,mu:67.4},
+  Maneenund:{bf:39.0,mu:57.3},Nott:{bf:23.9,mu:72.1},Ohm:{bf:37.0,mu:59.7},
+  Orawan:{bf:37.2,mu:59.0},Pipat:{bf:21.9,mu:74.0},Piyathida:{bf:23.1,mu:72.5},
+  Pruang:{bf:19.6,mu:76.0},Sonny:{bf:20.8,mu:74.8},
+};
+const prog2={
+  Ann:{bf:24.6,mu:71.3},Ben:{bf:26.3,mu:69.8},Best:{bf:26.0,mu:70.1},
+  Bob:{bf:31.9,mu:64.4},Jue:{bf:28.7,mu:67.5},Maneenund:{bf:39.0,mu:57.3},
+  Nott:{bf:22.7,mu:73.1},Ohm:{bf:36.3,mu:60.4},Orawan:{bf:36.5,mu:59.7},
+  Pipat:{bf:21.0,mu:74.8},Piyathida:{bf:23.6,mu:72.0},Pruang:{bf:19.3,mu:76.2},
+  Sonny:{bf:20.8,mu:74.9},Wason:{bf:29.6,mu:66.7},
+};
+const prog3={
+  Ann:{bf:23.7,mu:72.1},Ben:{bf:26.2,mu:69.8},Bob:{bf:31.9,mu:64.5},Jue:{bf:29.3,mu:67.0},
+  Maneenund:{bf:38.4,mu:57.8},Nott:{bf:22.6,mu:73.4},Ohm:{bf:36.1,mu:60.5},
+  Orawan:{bf:36.9,mu:59.2},Pipat:{bf:20.9,mu:74.9},Piyathida:{bf:23.0,mu:72.6},
+  Pruang:{bf:19.9,mu:75.7},Sonny:{bf:20.7,mu:75.0},Wason:{bf:30.0,mu:66.4},
+};
+const prog4={
+  Ben:{bf:26.0,mu:70.1},Best:{bf:25.0,mu:71.0},Bob:{bf:31.6,mu:64.7},
+  Jue:{bf:29.2,mu:67.0},Maneenund:{bf:38.4,mu:57.9},Nott:{bf:22.1,mu:73.8},
+  Orawan:{bf:36.3,mu:60.0},Pipat:{bf:20.1,mu:75.7},Piyathida:{bf:22.5,mu:73.1},
+  Pruang:{bf:19.6,mu:76.1},Wason:{bf:29.7,mu:66.6},
+};
+
+function sign(v){return v>=0?'+':'';}
+function dpFat(d){return d==null?'':d<0?'dt-gf':d>0?'dt-bf':'dt-n';}
+function dpMu(d){return d==null?'':d>0?'dt-gm':d<0?'dt-bm':'dt-n';}
+function dpTxt(d){return d==null?'':d===0?'±0':`${sign(d)}${Math.abs(d).toFixed(2)}`;}
+function bw(v,mn,mx){if(v==null)return 0;return Math.max(4,Math.min(96,(v-mn)/(mx-mn)*92+4));}
+
+function getBadge(name){
+  const b=base[name];const p=prog4[name]||prog3[name]||prog2[name]||prog1[name];
+  if(!p)return['badge-skip','⏳ Pending'];
+  const df=p.bf-b.bf,dm=p.mu-b.mu;
+  if(df<=0&&dm>=0)return['badge-improved','✅ Improved'];
+  if(df>0&&dm<0)return['badge-declined','⚠️ Regressed'];
+  return['badge-mixed','〰️ Mixed'];
+}
+
+function buildCard(name){
+  const b=base[name];
+  const p1=prog1[name]||null;const p2=prog2[name]||null;
+  const p3=prog3[name]||null;const p4=prog4[name]||null;
+  const color=colorMap[name];
+  const[badgeClass,badgeText]=getBadge(name);
+  const rounds=[p1?'R1':null,p2?'R2':null,p3?'R3':null,p4?'R4':null].filter(Boolean);
+  const subtitle=rounds.length?rounds.join(' + ')+' measured':'Pending';
+  const df1=p1?+(p1.bf-b.bf).toFixed(2):null;const dm1=p1?+(p1.mu-b.mu).toFixed(2):null;
+  const df2=p2?+(p2.bf-b.bf).toFixed(2):null;const dm2=p2?+(p2.mu-b.mu).toFixed(2):null;
+  const df3=p3?+(p3.bf-b.bf).toFixed(2):null;const dm3=p3?+(p3.mu-b.mu).toFixed(2):null;
+  const df4=p4?+(p4.bf-b.bf).toFixed(2):null;const dm4=p4?+(p4.mu-b.mu).toFixed(2):null;
+  const allBF=[b.bf,p1?.bf,p2?.bf,p3?.bf,p4?.bf].filter(v=>v!=null);
+  const allMu=[b.mu,p1?.mu,p2?.mu,p3?.mu,p4?.mu].filter(v=>v!=null);
+  const bfMin=Math.min(...allBF)-1.5,bfMax=Math.max(...allBF)+1.5;
+  const muMin=Math.min(...allMu)-1.5,muMax=Math.max(...allMu)+1.5;
+  function bfBar(val,clr){if(val==null)return'';const pct=bw(val,bfMin,bfMax);const ins=pct>30;return`<div class="bar-outer"><div class="bar-inner" style="width:${pct}%;background:${clr}">${ins?`<span class="bar-value">${val.toFixed(1)}%</span>`:''}</div>${!ins?`<span style="position:absolute;left:calc(${pct}% + 4px);top:3px;font-size:9px;font-weight:700;color:${clr}">${val.toFixed(1)}%</span>`:''}</div>`;}
+  function muBar(val,clr){if(val==null)return'';const pct=bw(val,muMin,muMax);const ins=pct>30;return`<div class="bar-outer"><div class="bar-inner" style="width:${pct}%;background:${clr}">${ins?`<span class="bar-value">${val.toFixed(1)}%</span>`:''}</div>${!ins?`<span style="position:absolute;left:calc(${pct}% + 4px);top:3px;font-size:9px;font-weight:700;color:${clr}">${val.toFixed(1)}%</span>`:''}</div>`;}
+  const skipNote=(!p1&&p2)?`<div class="skip-note">⚠️ Skipped Round 1 — deltas are vs baseline</div>`:'';
+  return`<div class="person-card">
+  <div class="card-header">
+    <div class="card-identity"><div class="avatar" style="background:${color}">${name.substring(0,2).toUpperCase()}</div><div class="name-text"><h3>${name}</h3><p>${subtitle}</p></div></div>
+    <div class="badge ${badgeClass}">${badgeText}</div>
+  </div>
+  <div class="chart-section"><div class="chart-title">🔴 Body Fat %</div><div class="bar-chart">
+    <div class="bar-row"><div class="bar-row-label">Baseline</div>${bfBar(b.bf,'#94A3B8')}<div class="delta-tag dt-n" style="visibility:hidden">—</div></div>
+    ${p1?`<div class="bar-row"><div class="bar-row-label">Round 1</div>${bfBar(p1.bf,'#F87171')}<div class="delta-tag ${dpFat(df1)}">${dpTxt(df1)} pp</div></div>`:''}
+    ${p2?`<div class="bar-row"><div class="bar-row-label">Round 2</div>${bfBar(p2.bf,'#EF4444')}<div class="delta-tag ${dpFat(df2)}">${dpTxt(df2)} pp</div></div>`:''}
+    ${p3?`<div class="bar-row"><div class="bar-row-label">Round 3</div>${bfBar(p3.bf,'#B91C1C')}<div class="delta-tag ${dpFat(df3)}">${dpTxt(df3)} pp</div></div>`:''}
+    ${p4?`<div class="bar-row"><div class="bar-row-label">Round 4</div>${bfBar(p4.bf,'#7F1D1D')}<div class="delta-tag ${dpFat(df4)}">${dpTxt(df4)} pp</div></div>`:''}
+  </div></div>
+  <hr class="chart-divider">
+  <div class="chart-section"><div class="chart-title">🔵 Muscle %</div><div class="bar-chart">
+    <div class="bar-row"><div class="bar-row-label">Baseline</div>${muBar(b.mu,'#94A3B8')}<div class="delta-tag dt-n" style="visibility:hidden">—</div></div>
+    ${p1?`<div class="bar-row"><div class="bar-row-label">Round 1</div>${muBar(p1.mu,'#60A5FA')}<div class="delta-tag ${dpMu(dm1)}">${dpTxt(dm1)} pp</div></div>`:''}
+    ${p2?`<div class="bar-row"><div class="bar-row-label">Round 2</div>${muBar(p2.mu,'#3B82F6')}<div class="delta-tag ${dpMu(dm2)}">${dpTxt(dm2)} pp</div></div>`:''}
+    ${p3?`<div class="bar-row"><div class="bar-row-label">Round 3</div>${muBar(p3.mu,'#1D4ED8')}<div class="delta-tag ${dpMu(dm3)}">${dpTxt(dm3)} pp</div></div>`:''}
+    ${p4?`<div class="bar-row"><div class="bar-row-label">Round 4</div>${muBar(p4.mu,'#1E3A8A')}<div class="delta-tag ${dpMu(dm4)}">${dpTxt(dm4)} pp</div></div>`:''}
+  </div></div>
+  ${skipNote}
+</div>`;}
+
+function buildMissedCard(name){
+  const last=prog4[name]||prog3[name]||prog2[name]||prog1[name]||base[name];
+  return`<div class="missed-card">
+  <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+    <div class="avatar" style="background:${colorMap[name]};width:30px;height:30px;font-size:11px">${name.substring(0,2).toUpperCase()}</div>
+    <div><div style="font-size:13px;font-weight:700">${name}</div><div style="font-size:10px;color:#94A3B8">Absent Round 4</div></div>
+    <div class="badge badge-skip" style="margin-left:auto">⏳ Absent</div>
+  </div>
+  <div style="display:flex;gap:20px;justify-content:center;padding:4px 0">
+    <div style="text-align:center"><div style="font-size:9px;color:#EF4444;font-weight:700;text-transform:uppercase">Last BF%</div><div style="font-size:20px;font-weight:800;color:#EF4444">${last.bf.toFixed(1)}%</div></div>
+    <div style="text-align:center"><div style="font-size:9px;color:#3B82F6;font-weight:700;text-transform:uppercase">Last Mu%</div><div style="font-size:20px;font-weight:800;color:#3B82F6">${last.mu.toFixed(1)}%</div></div>
+  </div>
+</div>`;}
+
+const r4Names=Object.keys(prog4).sort((a,b)=>a.localeCompare(b));
+const pendingNames=allNames.filter(n=>!prog4[n]).sort();
+document.getElementById('cards-r4').innerHTML=r4Names.map(n=>buildCard(n)).join('');
+document.getElementById('cards-pending').innerHTML=pendingNames.map(buildMissedCard).join('');
+</script></body></html>

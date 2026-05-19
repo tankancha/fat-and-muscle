@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fat &amp; Muscle Campaign — Leaderboard</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:Arial,Helvetica,sans-serif;background:#F1F5F9;color:#1E293B;padding:22px 18px;}
+  .page-header{background:linear-gradient(135deg,#0F172A,#1E3A5F);border-radius:14px;padding:22px 26px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .page-header h1{font-size:19px;font-weight:800;color:#fff;line-height:1.2;}
+  .page-header p{font-size:10px;color:#94A3B8;margin-top:4px;}
+  .hbadges{display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0;}
+  .hbadge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:6px 11px;text-align:center;}
+  .hbadge.r3{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.4);}
+  .hbadge.r4{background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.4);}
+  .round-header.r4hdr{background:linear-gradient(135deg,#4C1D95,#6D28D9);}
+  .hbadge .hl{font-size:8px;color:#64748B;text-transform:uppercase;letter-spacing:.5px;}
+  .hbadge .hv{font-size:11px;font-weight:700;color:#fff;margin-top:1px;}
+  .rule-box{background:#fff;border:1px solid #E2E8F0;border-left:4px solid #6366F1;border-radius:9px;padding:11px 16px;margin-bottom:14px;font-size:10px;color:#475569;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:flex-start;}
+  .rule-box strong{color:#1E293B;font-size:11px;display:block;margin-bottom:4px;}
+  .rule-item{display:flex;align-items:center;gap:6px;}
+  .rdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .round-block{margin-bottom:22px;}
+  .round-header{background:linear-gradient(135deg,#0F172A,#1E3A5F);border-radius:12px;padding:12px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .round-header.r3hdr{background:linear-gradient(135deg,#064E3B,#065F46);}
+  .round-header h2{font-size:14px;font-weight:800;color:#fff;}
+  .round-header .sub{font-size:10px;color:#94A3B8;margin-top:2px;}
+  .round-count-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:7px;padding:4px 10px;font-size:10px;font-weight:700;color:#fff;}
+  .rank-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:780px){.rank-cols{grid-template-columns:1fr;}}
+  .rank-panel{background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;}
+  .rank-panel-header{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E2E8F0;}
+  .rph-title{font-size:11px;font-weight:800;color:#1E293B;}
+  .rph-sub{font-size:9px;color:#64748B;margin-top:1px;}
+  .rph-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;}
+  .rank-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #F1F5F9;position:relative;}
+  .rank-row:last-child{border-bottom:none;}
+  .rr-num{font-size:13px;font-weight:800;width:26px;flex-shrink:0;text-align:center;}
+  .avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
+  .rr-name{font-size:12px;font-weight:700;flex:1;min-width:0;}
+  .rr-name .rr-sub{font-size:9px;color:#94A3B8;font-weight:400;}
+  .rr-metrics{display:flex;flex-direction:column;gap:2px;min-width:110px;}
+  .rr-metric{display:flex;align-items:center;gap:4px;font-size:9px;}
+  .rr-metric-lbl{color:#94A3B8;width:18px;flex-shrink:0;}
+  .rr-bar-track{flex:1;height:5px;background:#F1F5F9;border-radius:3px;overflow:hidden;}
+  .rr-bar-fill{height:100%;border-radius:3px;}
+  .rr-delta{font-size:10px;font-weight:800;width:46px;text-align:right;flex-shrink:0;}
+  .rr-score{text-align:right;min-width:42px;flex-shrink:0;}
+  .rr-score .sv{font-size:16px;font-weight:900;line-height:1;}
+  .rr-score .su{font-size:8px;color:#94A3B8;}
+  .rr-gold{background:linear-gradient(90deg,#FFFBEB,#fff);}
+  .rr-silver{background:linear-gradient(90deg,#F8FAFC,#fff);}
+  .rr-bronze{background:linear-gradient(90deg,#FFFBEB,#fff);}
+  .rr-last{background:linear-gradient(90deg,#FEF2F2,#fff);}
+  .ribbon{position:absolute;top:0;right:0;font-size:7px;font-weight:800;padding:2px 8px;border-radius:0 10px 0 6px;letter-spacing:.5px;text-transform:uppercase;}
+  .tie-b{font-size:7px;font-weight:700;background:#EFF6FF;color:#3B82F6;border:1px solid #BFDBFE;border-radius:4px;padding:1px 4px;margin-left:2px;vertical-align:middle;}
+  .na-note{font-size:9px;color:#94A3B8;font-style:italic;text-align:center;padding:10px;border-bottom:1px solid #F1F5F9;}
+  .missed-section{margin-top:10px;}
+  .missed-title{font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .missed-chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .missed-chip{background:#fff;border:1px dashed #CBD5E1;border-radius:7px;padding:5px 10px;display:flex;align-items:center;gap:6px;font-size:10px;color:#64748B;}
+  .missed-chip .mc-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;}
+  .footer{margin-top:16px;text-align:center;font-size:10px;color:#94A3B8;border-top:1px solid #E2E8F0;padding-top:10px;}
+  .podium-container{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:18px 16px 0 16px;margin-bottom:14px;text-align:center;}
+  .podium-heading{font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.6px;margin-bottom:16px;}
+  .podium-stage{display:flex;justify-content:center;align-items:flex-end;gap:8px;}
+  .podium-slot{display:flex;flex-direction:column;align-items:center;}
+  .podium-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:4px;}
+  .podium-person{display:flex;flex-direction:column;align-items:center;gap:3px;margin-bottom:4px;}
+  .podium-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
+  .podium-pname{font-size:10px;font-weight:800;color:#1E293B;}
+  .podium-score{font-size:9px;font-weight:700;margin-bottom:6px;}
+  .podium-step{border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;}
+  .podium-step-label{font-size:13px;font-weight:900;color:#fff;}
+  @media print{@page{size:A3 portrait;margin:10mm;}body{background:#F1F5F9;padding:0;}.rank-row{break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div><h1>🏆 Fat &amp; Muscle Campaign — Leaderboard</h1><p>Each round shows two rankings: improvement vs previous measurement &amp; cumulative change vs baseline</p></div>
+  <div class="hbadges">
+    <div class="hbadge"><div class="hl">Baseline</div><div class="hv">16 Mar 2026</div></div>
+    <div class="hbadge"><div class="hl">Round 1</div><div class="hv">31 Mar–1 Apr</div></div>
+    <div class="hbadge"><div class="hl">Round 2</div><div class="hv">20 Apr 2026</div></div>
+    <div class="hbadge r3"><div class="hl">Round 3</div><div class="hv">5 May 2026</div></div>
+    <div class="hbadge r4"><div class="hl">Round 4 ✨</div><div class="hv">19 May 2026</div></div>
+  </div>
+</div>
+<div class="rule-box">
+  <div><strong>Scoring Rule</strong><div class="rule-item"><div class="rdot" style="background:#6366F1"></div>Score = Fat Reduction (pp) + Muscle Gain (pp) · Higher is better</div></div>
+  <div><strong>Two Ranking Dimensions</strong>
+    <div class="rule-item" style="margin-bottom:3px"><div class="rdot" style="background:#F59E0B"></div><strong>vs Previous:</strong> improvement in this round only (Round N vs Round N−1)</div>
+    <div class="rule-item"><div class="rdot" style="background:#6366F1"></div><strong>vs Baseline:</strong> total cumulative improvement from 16 Mar 2026 to this round</div>
+  </div>
+</div>
+<div id="leaderboard"></div>
+<div class="footer">Data source: Mija Body Composition Scale 5400 &nbsp;·&nbsp; Campaign: 16 Mar – 19 May 2026 &nbsp;·&nbsp; Generated 19 May 2026</div>
+
+<script>
+const COLORS=['#6366F1','#EC4899','#14B8A6','#F59E0B','#8B5CF6','#10B981','#EF4444','#3B82F6','#F97316','#06B6D4','#84CC16','#A855F7','#22D3EE','#FB923C'];
+const ALL=['Ann','Ben','Best','Bob','Jue','Maneenund','Nott','Ohm','Orawan','Pipat','Piyathida','Pruang','Sonny','Wason'];
+const CM={};ALL.forEach((n,i)=>CM[n]=COLORS[i%COLORS.length]);
+const BASE={Ann:{bf:24.5,mu:71.4},Ben:{bf:27.4,mu:68.6},Best:{bf:26.7,mu:69.5},Bob:{bf:32.7,mu:63.7},Jue:{bf:29.2,mu:67.0},Maneenund:{bf:39.6,mu:56.8},Nott:{bf:23.3,mu:72.6},Ohm:{bf:36.9,mu:59.7},Orawan:{bf:37.6,mu:58.6},Pipat:{bf:21.9,mu:73.9},Piyathida:{bf:22.75,mu:72.8},Pruang:{bf:19.6,mu:76.1},Sonny:{bf:21.15,mu:74.55},Wason:{bf:30.1,mu:66.2}};
+const R1={Ann:{bf:24.7,mu:71.4},Bob:{bf:32.6,mu:63.9},Jue:{bf:28.8,mu:67.4},Maneenund:{bf:39.0,mu:57.3},Nott:{bf:23.9,mu:72.1},Ohm:{bf:37.0,mu:59.7},Orawan:{bf:37.2,mu:59.0},Pipat:{bf:21.9,mu:74.0},Piyathida:{bf:23.1,mu:72.5},Pruang:{bf:19.6,mu:76.0},Sonny:{bf:20.8,mu:74.8}};
+const R2={Ann:{bf:24.6,mu:71.3},Ben:{bf:26.3,mu:69.8},Best:{bf:26.0,mu:70.1},Bob:{bf:31.9,mu:64.4},Jue:{bf:28.7,mu:67.5},Maneenund:{bf:39.0,mu:57.3},Nott:{bf:22.7,mu:73.1},Ohm:{bf:36.3,mu:60.4},Orawan:{bf:36.5,mu:59.7},Pipat:{bf:21.0,mu:74.8},Piyathida:{bf:23.6,mu:72.0},Pruang:{bf:19.3,mu:76.2},Sonny:{bf:20.8,mu:74.9},Wason:{bf:29.6,mu:66.7}};
+const R3={Ann:{bf:23.7,mu:72.1},Ben:{bf:26.2,mu:69.8},Bob:{bf:31.9,mu:64.5},Jue:{bf:29.3,mu:67.0},Maneenund:{bf:38.4,mu:57.8},Nott:{bf:22.6,mu:73.4},Ohm:{bf:36.1,mu:60.5},Orawan:{bf:36.9,mu:59.2},Pipat:{bf:20.9,mu:74.9},Piyathida:{bf:23.0,mu:72.6},Pruang:{bf:19.9,mu:75.7},Sonny:{bf:20.7,mu:75.0},Wason:{bf:30.0,mu:66.4}};
+const R4={Ben:{bf:26.0,mu:70.1},Best:{bf:25.0,mu:71.0},Bob:{bf:31.6,mu:64.7},Jue:{bf:29.2,mu:67.0},Maneenund:{bf:38.4,mu:57.9},Nott:{bf:22.1,mu:73.8},Orawan:{bf:36.3,mu:60.0},Pipat:{bf:20.1,mu:75.7},Piyathida:{bf:22.5,mu:73.1},Pruang:{bf:19.6,mu:76.1},Wason:{bf:29.7,mu:66.6}};
+
+function sc(bf_from,mu_from,bf_to,mu_to){return+((bf_from-bf_to)+(mu_to-mu_from)).toFixed(2);}
+function scolor(s){return s>0?'#16A34A':s<0?'#DC2626':'#64748B';}
+function s(v){return v>=0?'+':'';}
+function f(v,d=2){return Math.abs(v).toFixed(d);}
+function ini(n){return n.substring(0,2).toUpperCase();}
+function barPct(delta,maxAbs){return maxAbs>0?Math.min(100,Math.abs(delta)/maxAbs*100):2;}
+
+function buildRankPanel(title,subtitle,badgeText,badgeColor,rows,naNote){
+  const scored=rows.map(r=>({...r,fat_d:+(r.bf_from-r.bf_to).toFixed(2),mu_d:+(r.mu_to-r.mu_from).toFixed(2),score:sc(r.bf_from,r.mu_from,r.bf_to,r.mu_to)})).sort((a,b)=>b.score-a.score);
+  const maxFat=Math.max(...scored.map(r=>Math.abs(r.fat_d)),0.01);
+  const maxMu=Math.max(...scored.map(r=>Math.abs(r.mu_d)),0.01);
+  let html=`<div class="rank-panel"><div class="rank-panel-header"><div><div class="rph-title">${title}</div><div class="rph-sub">${subtitle}</div></div><div class="rph-badge" style="background:${badgeColor}20;color:${badgeColor};border:1px solid ${badgeColor}40">${badgeText}</div></div>`;
+  if(naNote)html+=`<div class="na-note">${naNote}</div>`;
+  scored.forEach((r,i)=>{
+    const rank=i+1,isFirst=rank===1,isLast=rank===scored.length&&r.score<0;
+    const prevScore=i>0?scored[i-1].score:null,nextScore=i<scored.length-1?scored[i+1].score:null;
+    const isTie=(prevScore===r.score)||(nextScore===r.score);
+    let rowClass='',ribbon='';
+    if(isFirst){rowClass='rr-gold';ribbon=`<div class="ribbon" style="background:#EAB308;color:#fff">🥇 TOP</div>`;}
+    else if(isLast){rowClass='rr-last';ribbon=`<div class="ribbon" style="background:#EF4444;color:#fff">LAST</div>`;}
+    else if(rank===2)rowClass='rr-silver';else if(rank===3)rowClass='rr-bronze';
+    const medals={1:'🥇',2:'🥈',3:'🥉'};
+    const numDisplay=medals[rank]||`#${rank}`;
+    const tieBadge=isTie?`<span class="tie-b">TIE</span>`:'';
+    const fatBarPct=barPct(r.fat_d,maxFat),muBarPct=barPct(r.mu_d,maxMu);
+    const fatBarCol=r.fat_d>=0?'#22C55E':'#EF4444',muBarCol=r.mu_d>=0?'#3B82F6':'#EF4444';
+    const fatColor=r.fat_d>=0?'#16A34A':'#DC2626',muColor=r.mu_d>=0?'#2563EB':'#DC2626';
+    html+=`<div class="rank-row ${rowClass}">${ribbon}<div class="rr-num" style="color:${isFirst?'#EAB308':isLast?'#DC2626':'#64748B'}">${numDisplay}</div><div class="avatar" style="background:${CM[r.name]}">${ini(r.name)}</div><div class="rr-name">${r.name}${tieBadge}<div class="rr-sub">${r.bf_from.toFixed(1)}% → ${r.bf_to.toFixed(1)}% fat</div></div><div class="rr-metrics"><div class="rr-metric"><div class="rr-metric-lbl">Fat</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${fatBarPct}%;background:${fatBarCol}"></div></div><div class="rr-delta" style="color:${fatColor}">${s(r.fat_d)}${f(r.fat_d)}</div></div><div class="rr-metric"><div class="rr-metric-lbl">Mu</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${muBarPct}%;background:${muBarCol}"></div></div><div class="rr-delta" style="color:${muColor}">${s(r.mu_d)}${f(r.mu_d)}</div></div></div><div class="rr-score"><div class="sv" style="color:${scolor(r.score)}">${s(r.score)}${f(Math.abs(r.score))}</div><div class="su">pp total</div></div></div>`;
+  });
+  return html+`</div>`;
+}
+
+function missedChips(names,note){
+  if(!names.length)return'';
+  const chips=names.map(n=>`<div class="missed-chip"><div class="mc-av" style="background:${CM[n]||'#94A3B8'}">${ini(n)}</div>${n}</div>`).join('');
+  return`<div class="missed-section"><div class="missed-title">⏭️ Not ranked — ${note}</div><div class="missed-chips">${chips}</div></div>`;
+}
+
+function buildPodium(rows,heading){
+  const scored=rows.map(r=>({...r,score:sc(r.bf_from,r.mu_from,r.bf_to,r.mu_to)})).sort((a,b)=>b.score-a.score);
+  if(!scored.length)return'';
+  const groups=[];let idx=0,rankNum=1;
+  while(idx<scored.length&&groups.length<3){const gs=scored[idx].score;const m=[];while(idx<scored.length&&scored[idx].score===gs){m.push(scored[idx]);idx++;}groups.push({rank:rankNum,score:gs,members:m});rankNum+=m.length;}
+  while(groups.length<3)groups.push(null);
+  const display=[{group:groups[1],height:60,color:'#94A3B8',label:'2ND'},{group:groups[0],height:90,color:'#EAB308',label:'1ST'},{group:groups[2],height:45,color:'#CD7F32',label:'3RD'}];
+  function personHTML(m,bc){return`<div class="podium-person"><div style="border-radius:50%;border:3px solid ${bc};padding:2px;display:inline-block"><div class="podium-av" style="background:${CM[m.name]}">${ini(m.name)}</div></div><div class="podium-pname">${m.name}</div></div>`;}
+  function slotHTML({group,height,color,label}){const sw=group&&group.members.length>1?108:88;if(!group)return`<div class="podium-slot" style="width:${sw}px"><div style="height:${height}px"></div></div>`;const sc2=group.score>0?'#16A34A':group.score<0?'#DC2626':'#64748B';const tb=group.members.length>1?`<span class="tie-b" style="margin-left:0">TIE</span>`:'';return`<div class="podium-slot" style="width:${sw}px"><div class="podium-avatar-wrap">${group.members.map(m=>personHTML(m,color)).join('')}</div><div class="podium-score" style="color:${sc2}">${group.score>=0?'+':''}${group.score.toFixed(2)}pp${tb?' '+tb:''}</div><div class="podium-step" style="height:${height}px;width:${sw}px;background:${color}"><span class="podium-step-label">${label}</span></div></div>`;}
+  let out=`<div class="podium-container"><div class="podium-heading">${heading||'Top 3'}</div><div class="podium-stage">`;
+  for(const slot of display)out+=slotHTML(slot);
+  return out+`</div></div>`;
+}
+
+let html='';
+
+// ROUND 4
+const r4_vsBase=Object.keys(R4).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R4[n].bf,mu_to:R4[n].mu}));
+const r4_vsPrev=Object.keys(R4).filter(n=>R3[n]).map(n=>({name:n,bf_from:R3[n].bf,mu_from:R3[n].mu,bf_to:R4[n].bf,mu_to:R4[n].mu}));
+const r4_noR3=Object.keys(R4).filter(n=>!R3[n]); // Best skipped R3
+html+=`<div class="round-block"><div class="round-header r4hdr"><div><h2>✨ Round 4 Rankings — Latest</h2><div class="sub">19 May 2026 · 11 of 14 participants measured · 3 absent</div></div><div class="round-count-badge">11 / 14 measured</div></div>`;
+html+=buildPodium(r4_vsBase,'Round 4 Podium — Cumulative vs Baseline');
+html+=`<div class="rank-cols">`;
+html+=buildRankPanel('📈 vs Previous Round (R3→R4)','Improvement made specifically in Round 4','#A855F7','#A855F7',r4_vsPrev,r4_noR3.length?`⚠️ ${r4_noR3.join(', ')} skipped R3 — excluded from R3→R4 ranking`:null);
+html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 4','#6366F1','#6366F1',r4_vsBase,null);
+html+=`</div>`;
+html+=missedChips(['Ann','Ohm','Sonny'],'Absent Round 4');
+html+=`</div>`;
+
+// ROUND 3
+const r3_vsBase=Object.keys(R3).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R3[n].bf,mu_to:R3[n].mu}));
+const r3_vsPrev=Object.keys(R3).filter(n=>R2[n]).map(n=>({name:n,bf_from:R2[n].bf,mu_from:R2[n].mu,bf_to:R3[n].bf,mu_to:R3[n].mu}));
+const r3_noR2=Object.keys(R3).filter(n=>!R2[n]);
+html+=`<div class="round-block"><div class="round-header r3hdr"><div><h2>🟢 Round 3 Rankings</h2><div class="sub">5 May 2026 · 13 of 14 participants measured</div></div><div class="round-count-badge">13 / 14 measured</div></div>`;
+html+=buildPodium(r3_vsBase,'Round 3 Podium — Cumulative vs Baseline');
+html+=`<div class="rank-cols">`;
+html+=buildRankPanel('📈 vs Previous Round (R2→R3)','Improvement made specifically in Round 3','#F59E0B','#F59E0B',r3_vsPrev,r3_noR2.length?`⚠️ ${r3_noR2.join(', ')} skipped R2 — excluded from this ranking`:null);
+html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 3','#6366F1','#6366F1',r3_vsBase,null);
+html+=`</div>`;
+html+=missedChips(['Best'],'Absent Round 3');
+html+=`</div>`;
+
+// ROUND 2
+const r2_vsPrev=Object.keys(R2).filter(n=>R1[n]).map(n=>({name:n,bf_from:R1[n].bf,mu_from:R1[n].mu,bf_to:R2[n].bf,mu_to:R2[n].mu}));
+const r2_noR1=Object.keys(R2).filter(n=>!R1[n]);
+const r2_vsBase=Object.keys(R2).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R2[n].bf,mu_to:R2[n].mu}));
+html+=`<div class="round-block"><div class="round-header"><div><h2>🟢 Round 2 Rankings</h2><div class="sub">20 Apr 2026 · Score = change vs each reference point</div></div><div class="round-count-badge">14 / 14 participated</div></div>`;
+html+=buildPodium(r2_vsBase,'Round 2 Podium — Cumulative vs Baseline');
+html+=`<div class="rank-cols">`;
+html+=buildRankPanel('📈 vs Previous Round (R1→R2)','Improvement made specifically in Round 2','#F59E0B','#F59E0B',r2_vsPrev,r2_noR1.length?`⚠️ ${r2_noR1.join(', ')} skipped R1 — excluded from this ranking`:null);
+html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 2','#6366F1','#6366F1',r2_vsBase,null);
+html+=`</div>`;
+html+=missedChips([],'Did not measure in Round 2');
+html+=`</div>`;
+
+// ROUND 1
+const r1_rows=Object.keys(R1).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R1[n].bf,mu_to:R1[n].mu}));
+html+=`<div class="round-block"><div class="round-header"><div><h2>🔵 Round 1 Rankings</h2><div class="sub">31 Mar – 1 Apr 2026 · Round 1 is the first check-in — vs previous = vs baseline</div></div><div class="round-count-badge">11 / 14 participated</div></div>`;
+html+=buildPodium(r1_rows,'Round 1 Podium — Cumulative vs Baseline');
+html+=`<div class="rank-cols">`;
+html+=buildRankPanel('📈 vs Previous (= Baseline)','Round 1 is the first measurement — same as vs baseline','#F59E0B','#F59E0B',r1_rows,null);
+html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 1','#6366F1','#6366F1',r1_rows,null);
+html+=`</div>`;
+html+=missedChips(['Best','Wason','Ben'],'Did not measure in Round 1');
+html+=`</div>`;
+
+document.getElementById('leaderboard').innerHTML=html;
+</script></body></html>
