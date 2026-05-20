@@ -104,7 +104,7 @@ const BASE={Ann:{bf:24.5,mu:71.4},Ben:{bf:27.4,mu:68.6},Best:{bf:26.7,mu:69.5},B
 const R1={Ann:{bf:24.7,mu:71.4},Bob:{bf:32.6,mu:63.9},Jue:{bf:28.8,mu:67.4},Maneenund:{bf:39.0,mu:57.3},Nott:{bf:23.9,mu:72.1},Ohm:{bf:37.0,mu:59.7},Orawan:{bf:37.2,mu:59.0},Pipat:{bf:21.9,mu:74.0},Piyathida:{bf:23.1,mu:72.5},Pruang:{bf:19.6,mu:76.0},Sonny:{bf:20.8,mu:74.8}};
 const R2={Ann:{bf:24.6,mu:71.3},Ben:{bf:26.3,mu:69.8},Best:{bf:26.0,mu:70.1},Bob:{bf:31.9,mu:64.4},Jue:{bf:28.7,mu:67.5},Maneenund:{bf:39.0,mu:57.3},Nott:{bf:22.7,mu:73.1},Ohm:{bf:36.3,mu:60.4},Orawan:{bf:36.5,mu:59.7},Pipat:{bf:21.0,mu:74.8},Piyathida:{bf:23.6,mu:72.0},Pruang:{bf:19.3,mu:76.2},Sonny:{bf:20.8,mu:74.9},Wason:{bf:29.6,mu:66.7}};
 const R3={Ann:{bf:23.7,mu:72.1},Ben:{bf:26.2,mu:69.8},Bob:{bf:31.9,mu:64.5},Jue:{bf:29.3,mu:67.0},Maneenund:{bf:38.4,mu:57.8},Nott:{bf:22.6,mu:73.4},Ohm:{bf:36.1,mu:60.5},Orawan:{bf:36.9,mu:59.2},Pipat:{bf:20.9,mu:74.9},Piyathida:{bf:23.0,mu:72.6},Pruang:{bf:19.9,mu:75.7},Sonny:{bf:20.7,mu:75.0},Wason:{bf:30.0,mu:66.4}};
-const R4={Ben:{bf:26.0,mu:70.1},Best:{bf:25.0,mu:71.0},Bob:{bf:31.6,mu:64.7},Jue:{bf:29.2,mu:67.0},Maneenund:{bf:38.4,mu:57.9},Nott:{bf:22.1,mu:73.8},Orawan:{bf:36.3,mu:60.0},Pipat:{bf:20.1,mu:75.7},Piyathida:{bf:22.5,mu:73.1},Pruang:{bf:19.6,mu:76.1},Wason:{bf:29.7,mu:66.6}};
+const R4={Ben:{bf:26.0,mu:70.1},Best:{bf:25.0,mu:71.0},Bob:{bf:31.6,mu:64.7},Jue:{bf:29.2,mu:67.0},Maneenund:{bf:38.4,mu:57.9},Nott:{bf:22.1,mu:73.8},Ohm:{bf:36.2,mu:60.4},Orawan:{bf:36.3,mu:60.0},Pipat:{bf:20.1,mu:75.7},Piyathida:{bf:22.5,mu:73.1},Pruang:{bf:19.6,mu:76.1},Wason:{bf:29.7,mu:66.6}};
 
 function sc(bf_from,mu_from,bf_to,mu_to){return+((bf_from-bf_to)+(mu_to-mu_from)).toFixed(2);}
 function scolor(s){return s>0?'#16A34A':s<0?'#DC2626':'#64748B';}
@@ -164,13 +164,13 @@ let html='';
 const r4_vsBase=Object.keys(R4).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R4[n].bf,mu_to:R4[n].mu}));
 const r4_vsPrev=Object.keys(R4).filter(n=>R3[n]).map(n=>({name:n,bf_from:R3[n].bf,mu_from:R3[n].mu,bf_to:R4[n].bf,mu_to:R4[n].mu}));
 const r4_noR3=Object.keys(R4).filter(n=>!R3[n]); // Best skipped R3
-html+=`<div class="round-block"><div class="round-header r4hdr"><div><h2>✨ Round 4 Rankings — Latest</h2><div class="sub">19 May 2026 · 11 of 14 participants measured · 3 absent</div></div><div class="round-count-badge">11 / 14 measured</div></div>`;
+html+=`<div class="round-block"><div class="round-header r4hdr"><div><h2>✨ Round 4 Rankings — Latest</h2><div class="sub">19–20 May 2026 · 12 of 14 participants measured · 2 absent</div></div><div class="round-count-badge">12 / 14 measured</div></div>`;
 html+=buildPodium(r4_vsBase,'Round 4 Podium — Cumulative vs Baseline');
 html+=`<div class="rank-cols">`;
 html+=buildRankPanel('📈 vs Previous Round (R3→R4)','Improvement made specifically in Round 4','#A855F7','#A855F7',r4_vsPrev,r4_noR3.length?`⚠️ ${r4_noR3.join(', ')} skipped R3 — excluded from R3→R4 ranking`:null);
 html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 4','#6366F1','#6366F1',r4_vsBase,null);
 html+=`</div>`;
-html+=missedChips(['Ann','Ohm','Sonny'],'Absent Round 4');
+html+=missedChips(['Ann','Sonny'],'Absent Round 4');
 html+=`</div>`;
 
 // ROUND 3
@@ -211,4 +211,4 @@ html+=missedChips(['Best','Wason','Ben'],'Did not measure in Round 1');
 html+=`</div>`;
 
 document.getElementById('leaderboard').innerHTML=html;
-</script></body></html>
+</
