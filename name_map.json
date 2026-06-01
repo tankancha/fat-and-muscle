@@ -1,0 +1,9 @@
+{
+  "_comment": "Maps the name shown in the Mija scale app (lowercase) to the campaign roster name. Names that already match a roster name (case-insensitive) need no entry. The /update-round command adds new nicknames here as they appear, after you confirm them.",
+  "map": {
+    "arm": "Wason",
+    "muay": "Piyathida",
+    "maneenun": "Maneenund"
+  },
+  "roster": ["Ohm", "Maneenund", "Wason", "Pipat", "Pruang", "Nott", "Orawan", "Jue", "Ann", "Piyathida", "Best", "Sonny", "Bob", "Ben"]
+}

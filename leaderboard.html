@@ -78,33 +78,31 @@
 <body>
 <div class="page-header">
   <div><h1>🏆 Fat &amp; Muscle Campaign — Leaderboard</h1><p>Each round shows two rankings: improvement vs previous measurement &amp; cumulative change vs baseline</p></div>
-  <div class="hbadges">
-    <div class="hbadge"><div class="hl">Baseline</div><div class="hv">16 Mar 2026</div></div>
-    <div class="hbadge"><div class="hl">Round 1</div><div class="hv">31 Mar–1 Apr</div></div>
-    <div class="hbadge"><div class="hl">Round 2</div><div class="hv">20 Apr 2026</div></div>
-    <div class="hbadge r3"><div class="hl">Round 3</div><div class="hv">5 May 2026</div></div>
-    <div class="hbadge r4"><div class="hl">Round 4 ✨</div><div class="hv">19 May 2026</div></div>
-  </div>
+  <div class="hbadges" id="hbadges"></div>
 </div>
 <div class="rule-box">
   <div><strong>Scoring Rule</strong><div class="rule-item"><div class="rdot" style="background:#6366F1"></div>Score = Fat Reduction (pp) + Muscle Gain (pp) · Higher is better</div></div>
   <div><strong>Two Ranking Dimensions</strong>
     <div class="rule-item" style="margin-bottom:3px"><div class="rdot" style="background:#F59E0B"></div><strong>vs Previous:</strong> improvement in this round only (Round N vs Round N−1)</div>
-    <div class="rule-item"><div class="rdot" style="background:#6366F1"></div><strong>vs Baseline:</strong> total cumulative improvement from 16 Mar 2026 to this round</div>
+    <div class="rule-item"><div class="rdot" style="background:#6366F1"></div><strong>vs Baseline:</strong> total cumulative improvement from baseline to this round</div>
   </div>
 </div>
 <div id="leaderboard"></div>
-<div class="footer">Data source: Mija Body Composition Scale 5400 &nbsp;·&nbsp; Campaign: 16 Mar – 19 May 2026 &nbsp;·&nbsp; Generated 19 May 2026</div>
+<div class="footer" id="footer"></div>
 
+<!-- Data is generated from the spreadsheet by build_data.py -->
+<script src="data.js"></script>
 <script>
+const R=window.RACE;
+const NAMES=R.NAMES;
+const ALL=[...NAMES].sort((a,b)=>a.localeCompare(b));
 const COLORS=['#6366F1','#EC4899','#14B8A6','#F59E0B','#8B5CF6','#10B981','#EF4444','#3B82F6','#F97316','#06B6D4','#84CC16','#A855F7','#22D3EE','#FB923C'];
-const ALL=['Ann','Ben','Best','Bob','Jue','Maneenund','Nott','Ohm','Orawan','Pipat','Piyathida','Pruang','Sonny','Wason'];
 const CM={};ALL.forEach((n,i)=>CM[n]=COLORS[i%COLORS.length]);
-const BASE={Ann:{bf:24.5,mu:71.4},Ben:{bf:27.4,mu:68.6},Best:{bf:26.7,mu:69.5},Bob:{bf:32.7,mu:63.7},Jue:{bf:29.2,mu:67.0},Maneenund:{bf:39.6,mu:56.8},Nott:{bf:23.3,mu:72.6},Ohm:{bf:36.9,mu:59.7},Orawan:{bf:37.6,mu:58.6},Pipat:{bf:21.9,mu:73.9},Piyathida:{bf:22.75,mu:72.8},Pruang:{bf:19.6,mu:76.1},Sonny:{bf:21.15,mu:74.55},Wason:{bf:30.1,mu:66.2}};
-const R1={Ann:{bf:24.7,mu:71.4},Bob:{bf:32.6,mu:63.9},Jue:{bf:28.8,mu:67.4},Maneenund:{bf:39.0,mu:57.3},Nott:{bf:23.9,mu:72.1},Ohm:{bf:37.0,mu:59.7},Orawan:{bf:37.2,mu:59.0},Pipat:{bf:21.9,mu:74.0},Piyathida:{bf:23.1,mu:72.5},Pruang:{bf:19.6,mu:76.0},Sonny:{bf:20.8,mu:74.8}};
-const R2={Ann:{bf:24.6,mu:71.3},Ben:{bf:26.3,mu:69.8},Best:{bf:26.0,mu:70.1},Bob:{bf:31.9,mu:64.4},Jue:{bf:28.7,mu:67.5},Maneenund:{bf:39.0,mu:57.3},Nott:{bf:22.7,mu:73.1},Ohm:{bf:36.3,mu:60.4},Orawan:{bf:36.5,mu:59.7},Pipat:{bf:21.0,mu:74.8},Piyathida:{bf:23.6,mu:72.0},Pruang:{bf:19.3,mu:76.2},Sonny:{bf:20.8,mu:74.9},Wason:{bf:29.6,mu:66.7}};
-const R3={Ann:{bf:23.7,mu:72.1},Ben:{bf:26.2,mu:69.8},Bob:{bf:31.9,mu:64.5},Jue:{bf:29.3,mu:67.0},Maneenund:{bf:38.4,mu:57.8},Nott:{bf:22.6,mu:73.4},Ohm:{bf:36.1,mu:60.5},Orawan:{bf:36.9,mu:59.2},Pipat:{bf:20.9,mu:74.9},Piyathida:{bf:23.0,mu:72.6},Pruang:{bf:19.9,mu:75.7},Sonny:{bf:20.7,mu:75.0},Wason:{bf:30.0,mu:66.4}};
-const R4={Ben:{bf:26.0,mu:70.1},Best:{bf:25.0,mu:71.0},Bob:{bf:31.6,mu:64.7},Jue:{bf:29.2,mu:67.0},Maneenund:{bf:38.4,mu:57.9},Nott:{bf:22.1,mu:73.8},Ohm:{bf:36.2,mu:60.4},Orawan:{bf:36.3,mu:60.0},Pipat:{bf:20.1,mu:75.7},Piyathida:{bf:22.5,mu:73.1},Pruang:{bf:19.6,mu:76.1},Wason:{bf:29.7,mu:66.6}};
+const LATEST=R.LATEST;
+const A={};R.athletes.forEach(a=>A[a.name]=a);
+const baseOf=a=>({bf:a.stages[0].fat,mu:a.stages[0].muscle});
+const meas=(n,s)=>{const st=A[n].stages[s];return st&&st.present?{bf:st.fat,mu:st.muscle}:null;};
+const measuredNames=s=>NAMES.filter(n=>meas(n,s));
 
 function sc(bf_from,mu_from,bf_to,mu_to){return+((bf_from-bf_to)+(mu_to-mu_from)).toFixed(2);}
 function scolor(s){return s>0?'#16A34A':s<0?'#DC2626':'#64748B';}
@@ -119,6 +117,7 @@ function buildRankPanel(title,subtitle,badgeText,badgeColor,rows,naNote){
   const maxMu=Math.max(...scored.map(r=>Math.abs(r.mu_d)),0.01);
   let html=`<div class="rank-panel"><div class="rank-panel-header"><div><div class="rph-title">${title}</div><div class="rph-sub">${subtitle}</div></div><div class="rph-badge" style="background:${badgeColor}20;color:${badgeColor};border:1px solid ${badgeColor}40">${badgeText}</div></div>`;
   if(naNote)html+=`<div class="na-note">${naNote}</div>`;
+  if(!scored.length)html+=`<div class="na-note">No measurements yet</div>`;
   scored.forEach((r,i)=>{
     const rank=i+1,isFirst=rank===1,isLast=rank===scored.length&&r.score<0;
     const prevScore=i>0?scored[i-1].score:null,nextScore=i<scored.length-1?scored[i+1].score:null;
@@ -158,57 +157,52 @@ function buildPodium(rows,heading){
   return out+`</div></div>`;
 }
 
+// ---- Header badges (baseline + each measured round) -------------------------
+(function(){
+  let h='';
+  for(let st=0;st<=LATEST;st++){
+    const cls=st===LATEST?' r4':(st===LATEST-1?' r3':'');
+    const lbl=st===0?'Baseline':('Round '+st)+(st===LATEST?' ✨':'');
+    h+=`<div class="hbadge${cls}"><div class="hl">${lbl}</div><div class="hv">${R.STAGE_DATES[st]} 2026</div></div>`;
+  }
+  document.getElementById('hbadges').innerHTML=h;
+})();
+
+// ---- Round blocks, latest first ---------------------------------------------
 let html='';
-
-// ROUND 4
-const r4_vsBase=Object.keys(R4).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R4[n].bf,mu_to:R4[n].mu}));
-const r4_vsPrev=Object.keys(R4).filter(n=>R3[n]).map(n=>({name:n,bf_from:R3[n].bf,mu_from:R3[n].mu,bf_to:R4[n].bf,mu_to:R4[n].mu}));
-const r4_noR3=Object.keys(R4).filter(n=>!R3[n]); // Best skipped R3
-html+=`<div class="round-block"><div class="round-header r4hdr"><div><h2>✨ Round 4 Rankings — Latest</h2><div class="sub">19–20 May 2026 · 12 of 14 participants measured · 2 absent</div></div><div class="round-count-badge">12 / 14 measured</div></div>`;
-html+=buildPodium(r4_vsBase,'Round 4 Podium — Cumulative vs Baseline');
-html+=`<div class="rank-cols">`;
-html+=buildRankPanel('📈 vs Previous Round (R3→R4)','Improvement made specifically in Round 4','#A855F7','#A855F7',r4_vsPrev,r4_noR3.length?`⚠️ ${r4_noR3.join(', ')} skipped R3 — excluded from R3→R4 ranking`:null);
-html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 4','#6366F1','#6366F1',r4_vsBase,null);
-html+=`</div>`;
-html+=missedChips(['Ann','Sonny'],'Absent Round 4');
-html+=`</div>`;
-
-// ROUND 3
-const r3_vsBase=Object.keys(R3).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R3[n].bf,mu_to:R3[n].mu}));
-const r3_vsPrev=Object.keys(R3).filter(n=>R2[n]).map(n=>({name:n,bf_from:R2[n].bf,mu_from:R2[n].mu,bf_to:R3[n].bf,mu_to:R3[n].mu}));
-const r3_noR2=Object.keys(R3).filter(n=>!R2[n]);
-html+=`<div class="round-block"><div class="round-header r3hdr"><div><h2>🟢 Round 3 Rankings</h2><div class="sub">5 May 2026 · 13 of 14 participants measured</div></div><div class="round-count-badge">13 / 14 measured</div></div>`;
-html+=buildPodium(r3_vsBase,'Round 3 Podium — Cumulative vs Baseline');
-html+=`<div class="rank-cols">`;
-html+=buildRankPanel('📈 vs Previous Round (R2→R3)','Improvement made specifically in Round 3','#F59E0B','#F59E0B',r3_vsPrev,r3_noR2.length?`⚠️ ${r3_noR2.join(', ')} skipped R2 — excluded from this ranking`:null);
-html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 3','#6366F1','#6366F1',r3_vsBase,null);
-html+=`</div>`;
-html+=missedChips(['Best'],'Absent Round 3');
-html+=`</div>`;
-
-// ROUND 2
-const r2_vsPrev=Object.keys(R2).filter(n=>R1[n]).map(n=>({name:n,bf_from:R1[n].bf,mu_from:R1[n].mu,bf_to:R2[n].bf,mu_to:R2[n].mu}));
-const r2_noR1=Object.keys(R2).filter(n=>!R1[n]);
-const r2_vsBase=Object.keys(R2).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R2[n].bf,mu_to:R2[n].mu}));
-html+=`<div class="round-block"><div class="round-header"><div><h2>🟢 Round 2 Rankings</h2><div class="sub">20 Apr 2026 · Score = change vs each reference point</div></div><div class="round-count-badge">14 / 14 participated</div></div>`;
-html+=buildPodium(r2_vsBase,'Round 2 Podium — Cumulative vs Baseline');
-html+=`<div class="rank-cols">`;
-html+=buildRankPanel('📈 vs Previous Round (R1→R2)','Improvement made specifically in Round 2','#F59E0B','#F59E0B',r2_vsPrev,r2_noR1.length?`⚠️ ${r2_noR1.join(', ')} skipped R1 — excluded from this ranking`:null);
-html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 2','#6366F1','#6366F1',r2_vsBase,null);
-html+=`</div>`;
-html+=missedChips([],'Did not measure in Round 2');
-html+=`</div>`;
-
-// ROUND 1
-const r1_rows=Object.keys(R1).map(n=>({name:n,bf_from:BASE[n].bf,mu_from:BASE[n].mu,bf_to:R1[n].bf,mu_to:R1[n].mu}));
-html+=`<div class="round-block"><div class="round-header"><div><h2>🔵 Round 1 Rankings</h2><div class="sub">31 Mar – 1 Apr 2026 · Round 1 is the first check-in — vs previous = vs baseline</div></div><div class="round-count-badge">11 / 14 participated</div></div>`;
-html+=buildPodium(r1_rows,'Round 1 Podium — Cumulative vs Baseline');
-html+=`<div class="rank-cols">`;
-html+=buildRankPanel('📈 vs Previous (= Baseline)','Round 1 is the first measurement — same as vs baseline','#F59E0B','#F59E0B',r1_rows,null);
-html+=buildRankPanel('📊 vs Baseline (Cumulative)','Total change from 16 Mar 2026 to Round 1','#6366F1','#6366F1',r1_rows,null);
-html+=`</div>`;
-html+=missedChips(['Best','Wason','Ben'],'Did not measure in Round 1');
-html+=`</div>`;
-
+const EMO=['','🔵','🟢','⚡','✨','🔶','🟣','🟠','⭐'];
+for(let st=LATEST;st>=1;st--){
+  const measured=measuredNames(st);
+  const n=NAMES.length, k=measured.length, absent=NAMES.filter(x=>!meas(x,st));
+  const isLatest=st===LATEST, isPrev=st===LATEST-1;
+  const hdrClass=isLatest?'r4hdr':(isPrev?'r3hdr':'');
+  const title=`${EMO[st]||'•'} Round ${st} Rankings${isLatest?' — Latest':''}`;
+  const sub=`${R.STAGE_DATES[st]} 2026 · ${k} of ${n} participants measured${absent.length?` · ${absent.length} absent`:''}`;
+  // vs baseline
+  const vsBase=measured.map(name=>({name,bf_from:baseOf(A[name]).bf,mu_from:baseOf(A[name]).mu,bf_to:meas(name,st).bf,mu_to:meas(name,st).mu}));
+  // vs previous measured round (st-1)
+  let vsPrev,prevNote=null;
+  if(st===1){
+    vsPrev=vsBase; // first round: previous == baseline
+  }else{
+    const havePrev=measured.filter(name=>meas(name,st-1));
+    const noPrev=measured.filter(name=>!meas(name,st-1));
+    vsPrev=havePrev.map(name=>({name,bf_from:meas(name,st-1).bf,mu_from:meas(name,st-1).mu,bf_to:meas(name,st).bf,mu_to:meas(name,st).mu}));
+    if(noPrev.length)prevNote=`⚠️ ${noPrev.join(', ')} skipped R${st-1} — excluded from R${st-1}→R${st} ranking`;
+  }
+  html+=`<div class="round-block"><div class="round-header ${hdrClass}"><div><h2>${title}</h2><div class="sub">${sub}</div></div><div class="round-count-badge">${k} / ${n} measured</div></div>`;
+  html+=buildPodium(vsBase,`Round ${st} Podium — Cumulative vs Baseline`);
+  html+=`<div class="rank-cols">`;
+  const prevTitle=st===1?'📈 vs Previous (= Baseline)':`📈 vs Previous Round (R${st-1}→R${st})`;
+  const prevSub=st===1?'Round 1 is the first measurement — same as vs baseline':`Improvement made specifically in Round ${st}`;
+  html+=buildRankPanel(prevTitle,prevSub,'#A855F7','#A855F7',vsPrev,prevNote);
+  html+=buildRankPanel('📊 vs Baseline (Cumulative)',`Total change from ${R.STAGE_DATES[0]} 2026 to Round ${st}`,'#6366F1','#6366F1',vsBase,null);
+  html+=`</div>`;
+  html+=missedChips(absent,`Absent Round ${st}`);
+  html+=`</div>`;
+}
 document.getElementById('leaderboard').innerHTML=html;
-</
+document.getElementById('footer').innerHTML=`Data source: Mija Body Composition Scale S400 &nbsp;·&nbsp; Campaign: ${R.STAGE_DATES[0]} – ${R.STAGE_DATES[LATEST]} 2026 &nbsp;·&nbsp; ${NAMES.length} participants`;
+</script>
+</body>
+</html>
