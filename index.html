@@ -17,13 +17,6 @@
   /* promo bar (Nike-style dark strip) */
   .promo{background:var(--black);color:#fff;text-align:center;font-size:12px;font-weight:500;letter-spacing:.04em;padding:9px 16px;text-transform:uppercase;}
 
-  /* full-bleed race hero */
-  .race-section{position:relative;width:100%;height:calc(100vh - 38px);background:#000;overflow:hidden;}
-  .race-frame{display:block;width:100%;height:100%;border:0;}
-  .race-scrollcue{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.7);animation:cueBob 1.8s ease-in-out infinite;}
-  .race-scrollcue .chev{font-size:15px;line-height:1;}
-  @keyframes cueBob{0%,100%{transform:translate(-50%,0);opacity:.6;}50%{transform:translate(-50%,5px);opacity:1;}}
-
   /* editorial intro */
   .intro{max-width:1440px;margin:0 auto;padding:80px 48px 48px;}
   .eyebrow{font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--grey-500);margin-bottom:18px;}
@@ -76,11 +69,6 @@
 <body>
 
 <div class="promo">Body Composition Challenge · 16 Mar – 20 Jul 2026</div>
-
-<section class="race-section">
-  <iframe class="race-frame" src="race.html" title="Stadium Race animation" loading="eager"></iframe>
-  <div class="race-scrollcue"><span>Scroll</span><span class="chev">⌄</span></div>
-</section>
 
 <section class="intro">
   <div class="eyebrow">Mija Body Composition Scale S400 · 14 Athletes</div>
