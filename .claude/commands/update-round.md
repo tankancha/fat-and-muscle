@@ -32,7 +32,7 @@ User argument (may be empty): `$ARGUMENTS`
 - Read `name_map.json` (`map` = nickname→roster, `roster` = canonical names).
 - For each OCR row, resolve the shown name: case-insensitive match to a roster name, else look it up in `map`.
 - **Deduplicate** rows that resolve to the same person (some folders have a duplicate shot). If two shots for one person disagree on the numbers, surface both and ask which is correct.
-- If any shown name resolves to **nobody**, STOP and ask the user: "Photo says '<X>' (fat A%, muscle B%) — which participant is this?" After they answer, add `"<x_lowercased>": "<RosterName>"` to `name_map.json` `map` and continue.
+- **Name rule (strict):** people sometimes log under a personal nickname. If any shown name is **not already a roster name or in `name_map.json`**, STOP and ask the user: "Photo says '<X>' (fat A%, muscle B%) — which participant is this?" Do NOT guess, and do NOT write anything to the spreadsheet until they clarify. After they answer, add `"<x_lowercased>": "<RosterName>"` to `name_map.json` `map` and continue. (A wrong name silently corrupts that person's trend and the rankings.)
 
 ### 4. Derive the date
 - From the photos' date (e.g. `05/19/2026`) produce `date_label` like `19 May 26` and `title_date` like `19 May 2026`. If photos disagree, use the most common date.

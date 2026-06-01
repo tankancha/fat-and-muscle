@@ -73,7 +73,11 @@ NUM_STAGES = 8
 FINISH_SCORE = 6.0
 
 # Planned schedule. Index 0 = Baseline, 1..8 = progress rounds.
-# If an actual measurement date differs from the plan, edit the matching entry.
+# Dates are cosmetic labels only — the pipeline aligns rounds by ROUND NUMBER
+# (the sheet's ordinal), never by date, so a round can drift to whatever day it
+# actually happens. Remaining rounds: P5 ~8 Jun, P6 ~22 Jun, P7 ~6 Jul,
+# Final ~20 Jul 2026. Edit an entry here only if you want the displayed date to
+# match the real one; it does not affect alignment.
 STAGE_LABELS = ["Baseline", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"]
 STAGE_DATES = ["16 Mar", "31 Mar", "20 Apr", "5 May", "19 May",
                "8 Jun", "22 Jun", "6 Jul", "20 Jul"]

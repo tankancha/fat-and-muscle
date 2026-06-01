@@ -2,120 +2,131 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fat &amp; Muscle Campaign — Leaderboard</title>
+<title>Fat &amp; Muscle Challenge — Leaderboard</title>
 <style>
+  :root{
+    --black:#111111;--white:#FFFFFF;--snow:#FAFAFA;
+    --grey-100:#F5F5F5;--grey-200:#E5E5E5;--grey-300:#CACACB;--grey-500:#707072;
+    --red:#D30005;--green:#007D48;--blue:#1151FF;--gold:#FCA600;
+    --sans:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    --display:'Arial Narrow','Helvetica Neue',Helvetica,Arial,sans-serif;
+  }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:Arial,Helvetica,sans-serif;background:#F1F5F9;color:#1E293B;padding:22px 18px;}
-  .page-header{background:linear-gradient(135deg,#0F172A,#1E3A5F);border-radius:14px;padding:22px 26px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
-  .page-header h1{font-size:19px;font-weight:800;color:#fff;line-height:1.2;}
-  .page-header p{font-size:10px;color:#94A3B8;margin-top:4px;}
-  .hbadges{display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0;}
-  .hbadge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:6px 11px;text-align:center;}
-  .hbadge.r3{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.4);}
-  .hbadge.r4{background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.4);}
-  .round-header.r4hdr{background:linear-gradient(135deg,#4C1D95,#6D28D9);}
-  .hbadge .hl{font-size:8px;color:#64748B;text-transform:uppercase;letter-spacing:.5px;}
-  .hbadge .hv{font-size:11px;font-weight:700;color:#fff;margin-top:1px;}
-  .rule-box{background:#fff;border:1px solid #E2E8F0;border-left:4px solid #6366F1;border-radius:9px;padding:11px 16px;margin-bottom:14px;font-size:10px;color:#475569;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:flex-start;}
-  .rule-box strong{color:#1E293B;font-size:11px;display:block;margin-bottom:4px;}
+  body{font-family:var(--sans);background:var(--white);color:var(--black);padding:0;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1440px;margin:0 auto;padding:40px 48px 56px;}
+  @media(max-width:640px){.wrap{padding:24px 20px 40px;}}
+
+  .page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:1px solid var(--grey-200);padding-bottom:24px;margin-bottom:16px;}
+  .page-header .eyebrow{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-500);margin-bottom:12px;}
+  .page-header h1{font-family:var(--display);font-weight:800;text-transform:uppercase;line-height:.9;letter-spacing:-.01em;font-size:clamp(40px,7vw,72px);}
+  .hbadges{display:flex;gap:6px;flex-wrap:wrap;}
+  .hbadge{border:1px solid var(--grey-300);border-radius:30px;padding:6px 12px;text-align:center;}
+  .hbadge.r4{background:var(--black);border-color:var(--black);}
+  .hbadge.r4 .hl,.hbadge.r4 .hv{color:#fff;}
+  .hbadge .hl{font-size:10px;color:var(--grey-500);text-transform:uppercase;letter-spacing:.05em;}
+  .hbadge .hv{font-size:11px;font-weight:500;color:var(--black);margin-top:1px;}
+  .rule-box{border:1px solid var(--grey-200);border-radius:12px;padding:13px 18px;margin:14px 0 22px;font-size:12px;color:var(--grey-500);display:flex;flex-wrap:wrap;gap:10px 28px;align-items:flex-start;}
+  .rule-box strong{color:var(--black);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px;}
   .rule-item{display:flex;align-items:center;gap:6px;}
-  .rdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-  .round-block{margin-bottom:22px;}
-  .round-header{background:linear-gradient(135deg,#0F172A,#1E3A5F);border-radius:12px;padding:12px 20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-  .round-header.r3hdr{background:linear-gradient(135deg,#064E3B,#065F46);}
-  .round-header h2{font-size:14px;font-weight:800;color:#fff;}
-  .round-header .sub{font-size:10px;color:#94A3B8;margin-top:2px;}
-  .round-count-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:7px;padding:4px 10px;font-size:10px;font-weight:700;color:#fff;}
-  .rank-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .rdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--black);}
+
+  .round-block{margin-bottom:28px;}
+  .round-header{background:var(--black);border-radius:14px;padding:14px 22px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .round-header h2{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:-.005em;font-size:24px;color:#fff;}
+  .round-header .sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;}
+  .round-count-badge{border:1px solid rgba(255,255,255,.3);border-radius:30px;padding:5px 12px;font-size:11px;font-weight:500;color:#fff;letter-spacing:.02em;}
+  .round-header.latest{position:relative;}
+  .latest-tag{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:#fff;color:var(--black);border-radius:30px;padding:3px 9px;margin-left:10px;vertical-align:middle;}
+
+  .rank-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   @media(max-width:780px){.rank-cols{grid-template-columns:1fr;}}
-  .rank-panel{background:#fff;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;}
-  .rank-panel-header{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E2E8F0;}
-  .rph-title{font-size:11px;font-weight:800;color:#1E293B;}
-  .rph-sub{font-size:9px;color:#64748B;margin-top:1px;}
-  .rph-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px;}
-  .rank-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #F1F5F9;position:relative;}
+  .rank-panel{background:var(--white);border:1px solid var(--grey-200);border-radius:20px;overflow:hidden;}
+  .rank-panel-header{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--grey-200);}
+  .rph-title{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--black);}
+  .rph-sub{font-size:11px;color:var(--grey-500);margin-top:2px;}
+  .rph-badge{font-size:10px;font-weight:500;padding:3px 10px;border-radius:30px;letter-spacing:.02em;}
+  .rank-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--grey-100);position:relative;}
   .rank-row:last-child{border-bottom:none;}
-  .rr-num{font-size:13px;font-weight:800;width:26px;flex-shrink:0;text-align:center;}
-  .avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
-  .rr-name{font-size:12px;font-weight:700;flex:1;min-width:0;}
-  .rr-name .rr-sub{font-size:9px;color:#94A3B8;font-weight:400;}
+  .rr-num{font-family:var(--display);font-size:18px;font-weight:800;width:30px;flex-shrink:0;text-align:center;}
+  .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+  .rr-name{font-size:13px;font-weight:500;flex:1;min-width:0;}
+  .rr-name .rr-sub{font-size:10px;color:var(--grey-500);font-weight:400;}
   .rr-metrics{display:flex;flex-direction:column;gap:2px;min-width:110px;}
-  .rr-metric{display:flex;align-items:center;gap:4px;font-size:9px;}
-  .rr-metric-lbl{color:#94A3B8;width:18px;flex-shrink:0;}
-  .rr-bar-track{flex:1;height:5px;background:#F1F5F9;border-radius:3px;overflow:hidden;}
+  .rr-metric{display:flex;align-items:center;gap:4px;font-size:10px;}
+  .rr-metric-lbl{color:var(--grey-500);width:18px;flex-shrink:0;}
+  .rr-bar-track{flex:1;height:5px;background:var(--grey-100);border-radius:3px;overflow:hidden;}
   .rr-bar-fill{height:100%;border-radius:3px;}
-  .rr-delta{font-size:10px;font-weight:800;width:46px;text-align:right;flex-shrink:0;}
-  .rr-score{text-align:right;min-width:42px;flex-shrink:0;}
-  .rr-score .sv{font-size:16px;font-weight:900;line-height:1;}
-  .rr-score .su{font-size:8px;color:#94A3B8;}
-  .rr-gold{background:linear-gradient(90deg,#FFFBEB,#fff);}
-  .rr-silver{background:linear-gradient(90deg,#F8FAFC,#fff);}
-  .rr-bronze{background:linear-gradient(90deg,#FFFBEB,#fff);}
-  .rr-last{background:linear-gradient(90deg,#FEF2F2,#fff);}
-  .ribbon{position:absolute;top:0;right:0;font-size:7px;font-weight:800;padding:2px 8px;border-radius:0 10px 0 6px;letter-spacing:.5px;text-transform:uppercase;}
-  .tie-b{font-size:7px;font-weight:700;background:#EFF6FF;color:#3B82F6;border:1px solid #BFDBFE;border-radius:4px;padding:1px 4px;margin-left:2px;vertical-align:middle;}
-  .na-note{font-size:9px;color:#94A3B8;font-style:italic;text-align:center;padding:10px;border-bottom:1px solid #F1F5F9;}
-  .missed-section{margin-top:10px;}
-  .missed-title{font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .rr-delta{font-size:11px;font-weight:500;width:48px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums;}
+  .rr-score{text-align:right;min-width:46px;flex-shrink:0;}
+  .rr-score .sv{font-family:var(--display);font-size:22px;font-weight:800;line-height:1;}
+  .rr-score .su{font-size:9px;color:var(--grey-500);text-transform:uppercase;letter-spacing:.04em;}
+  .rr-gold{background:var(--snow);}
+  .rr-last{background:#FFF5F5;}
+  .ribbon{position:absolute;top:0;right:0;font-size:8px;font-weight:700;padding:3px 9px;border-radius:0 18px 0 8px;letter-spacing:.08em;text-transform:uppercase;}
+  .tie-b{font-size:8px;font-weight:500;background:var(--grey-100);color:var(--grey-500);border-radius:30px;padding:1px 6px;margin-left:4px;vertical-align:middle;text-transform:uppercase;letter-spacing:.04em;}
+  .na-note{font-size:11px;color:var(--grey-500);font-style:italic;text-align:center;padding:11px;border-bottom:1px solid var(--grey-100);}
+  .missed-section{margin-top:12px;}
+  .missed-title{font-size:11px;font-weight:500;color:var(--grey-500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px;}
   .missed-chips{display:flex;flex-wrap:wrap;gap:6px;}
-  .missed-chip{background:#fff;border:1px dashed #CBD5E1;border-radius:7px;padding:5px 10px;display:flex;align-items:center;gap:6px;font-size:10px;color:#64748B;}
-  .missed-chip .mc-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;}
-  .footer{margin-top:16px;text-align:center;font-size:10px;color:#94A3B8;border-top:1px solid #E2E8F0;padding-top:10px;}
-  .podium-container{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:18px 16px 0 16px;margin-bottom:14px;text-align:center;}
-  .podium-heading{font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.6px;margin-bottom:16px;}
+  .missed-chip{border:1px dashed var(--grey-300);border-radius:30px;padding:5px 12px 5px 6px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--grey-500);}
+  .missed-chip .mc-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;}
+  .footer{margin-top:8px;text-align:left;font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--grey-500);border-top:1px solid var(--grey-200);padding-top:20px;}
+
+  .podium-container{border:1px solid var(--grey-200);border-radius:20px;padding:20px 16px 0;margin-bottom:12px;text-align:center;}
+  .podium-heading{font-size:11px;font-weight:500;color:var(--grey-500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;}
   .podium-stage{display:flex;justify-content:center;align-items:flex-end;gap:8px;}
   .podium-slot{display:flex;flex-direction:column;align-items:center;}
   .podium-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:4px;}
   .podium-person{display:flex;flex-direction:column;align-items:center;gap:3px;margin-bottom:4px;}
-  .podium-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
-  .podium-pname{font-size:10px;font-weight:800;color:#1E293B;}
-  .podium-score{font-size:9px;font-weight:700;margin-bottom:6px;}
+  .podium-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;}
+  .podium-pname{font-size:11px;font-weight:500;color:var(--black);}
+  .podium-score{font-size:10px;font-weight:500;margin-bottom:6px;font-variant-numeric:tabular-nums;}
   .podium-step{border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;}
-  .podium-step-label{font-size:13px;font-weight:900;color:#fff;}
-  @media print{@page{size:A3 portrait;margin:10mm;}body{background:#F1F5F9;padding:0;}.rank-row{break-inside:avoid;}}
+  .podium-step-label{font-family:var(--display);font-size:15px;font-weight:800;color:#fff;}
+  @media print{@page{size:A3 portrait;margin:10mm;}.rank-row{break-inside:avoid;}}
 </style>
 </head>
 <body>
+<div class="wrap">
 <div class="page-header">
-  <div><h1>🏆 Fat &amp; Muscle Campaign — Leaderboard</h1><p>Each round shows two rankings: improvement vs previous measurement &amp; cumulative change vs baseline</p></div>
+  <div><div class="eyebrow">Improvement vs previous round &amp; cumulative vs baseline</div><h1>Leader<br>board</h1></div>
   <div class="hbadges" id="hbadges"></div>
 </div>
 <div class="rule-box">
-  <div><strong>Scoring Rule</strong><div class="rule-item"><div class="rdot" style="background:#6366F1"></div>Score = Fat Reduction (pp) + Muscle Gain (pp) · Higher is better</div></div>
-  <div><strong>Two Ranking Dimensions</strong>
-    <div class="rule-item" style="margin-bottom:3px"><div class="rdot" style="background:#F59E0B"></div><strong>vs Previous:</strong> improvement in this round only (Round N vs Round N−1)</div>
-    <div class="rule-item"><div class="rdot" style="background:#6366F1"></div><strong>vs Baseline:</strong> total cumulative improvement from baseline to this round</div>
+  <div><strong>Scoring</strong><div class="rule-item"><div class="rdot"></div>Score = fat reduction (pp) + muscle gain (pp) · higher is better</div></div>
+  <div><strong>Two dimensions</strong>
+    <div class="rule-item" style="margin-bottom:3px"><div class="rdot"></div><strong style="display:inline;margin:0">vs Previous:</strong>&nbsp;improvement this round (R N vs R N−1)</div>
+    <div class="rule-item"><div class="rdot"></div><strong style="display:inline;margin:0">vs Baseline:</strong>&nbsp;cumulative change from baseline</div>
   </div>
 </div>
 <div id="leaderboard"></div>
 <div class="footer" id="footer"></div>
+</div>
 
 <!-- Data is generated from the spreadsheet by build_data.py -->
 <script src="data.js"></script>
 <script>
 const R=window.RACE;
 const NAMES=R.NAMES;
-const ALL=[...NAMES].sort((a,b)=>a.localeCompare(b));
-const COLORS=['#6366F1','#EC4899','#14B8A6','#F59E0B','#8B5CF6','#10B981','#EF4444','#3B82F6','#F97316','#06B6D4','#84CC16','#A855F7','#22D3EE','#FB923C'];
-const CM={};ALL.forEach((n,i)=>CM[n]=COLORS[i%COLORS.length]);
 const LATEST=R.LATEST;
 const A={};R.athletes.forEach(a=>A[a.name]=a);
 const baseOf=a=>({bf:a.stages[0].fat,mu:a.stages[0].muscle});
 const meas=(n,s)=>{const st=A[n].stages[s];return st&&st.present?{bf:st.fat,mu:st.muscle}:null;};
 const measuredNames=s=>NAMES.filter(n=>meas(n,s));
+const CM=n=>A[n].style?A[n].style.color:'#707072';
 
 function sc(bf_from,mu_from,bf_to,mu_to){return+((bf_from-bf_to)+(mu_to-mu_from)).toFixed(2);}
-function scolor(s){return s>0?'#16A34A':s<0?'#DC2626':'#64748B';}
-function s(v){return v>=0?'+':'';}
+function scolor(s){return s>0?'#007D48':s<0?'#D30005':'#707072';}
+function sgn(v){return v>=0?'+':'−';}
 function f(v,d=2){return Math.abs(v).toFixed(d);}
 function ini(n){return n.substring(0,2).toUpperCase();}
 function barPct(delta,maxAbs){return maxAbs>0?Math.min(100,Math.abs(delta)/maxAbs*100):2;}
 
-function buildRankPanel(title,subtitle,badgeText,badgeColor,rows,naNote){
+function buildRankPanel(title,subtitle,badgeText,rows,naNote){
   const scored=rows.map(r=>({...r,fat_d:+(r.bf_from-r.bf_to).toFixed(2),mu_d:+(r.mu_to-r.mu_from).toFixed(2),score:sc(r.bf_from,r.mu_from,r.bf_to,r.mu_to)})).sort((a,b)=>b.score-a.score);
   const maxFat=Math.max(...scored.map(r=>Math.abs(r.fat_d)),0.01);
   const maxMu=Math.max(...scored.map(r=>Math.abs(r.mu_d)),0.01);
-  let html=`<div class="rank-panel"><div class="rank-panel-header"><div><div class="rph-title">${title}</div><div class="rph-sub">${subtitle}</div></div><div class="rph-badge" style="background:${badgeColor}20;color:${badgeColor};border:1px solid ${badgeColor}40">${badgeText}</div></div>`;
+  let html=`<div class="rank-panel"><div class="rank-panel-header"><div><div class="rph-title">${title}</div><div class="rph-sub">${subtitle}</div></div><div class="rph-badge" style="background:#F5F5F5;color:#111111;border:1px solid #CACACB">${badgeText}</div></div>`;
   if(naNote)html+=`<div class="na-note">${naNote}</div>`;
   if(!scored.length)html+=`<div class="na-note">No measurements yet</div>`;
   scored.forEach((r,i)=>{
@@ -123,24 +134,23 @@ function buildRankPanel(title,subtitle,badgeText,badgeColor,rows,naNote){
     const prevScore=i>0?scored[i-1].score:null,nextScore=i<scored.length-1?scored[i+1].score:null;
     const isTie=(prevScore===r.score)||(nextScore===r.score);
     let rowClass='',ribbon='';
-    if(isFirst){rowClass='rr-gold';ribbon=`<div class="ribbon" style="background:#EAB308;color:#fff">🥇 TOP</div>`;}
-    else if(isLast){rowClass='rr-last';ribbon=`<div class="ribbon" style="background:#EF4444;color:#fff">LAST</div>`;}
-    else if(rank===2)rowClass='rr-silver';else if(rank===3)rowClass='rr-bronze';
+    if(isFirst){rowClass='rr-gold';ribbon=`<div class="ribbon" style="background:#FCA600;color:#111">TOP</div>`;}
+    else if(isLast){rowClass='rr-last';ribbon=`<div class="ribbon" style="background:#D30005;color:#fff">LAST</div>`;}
     const medals={1:'🥇',2:'🥈',3:'🥉'};
-    const numDisplay=medals[rank]||`#${rank}`;
-    const tieBadge=isTie?`<span class="tie-b">TIE</span>`:'';
+    const numDisplay=medals[rank]||`${rank}`;
+    const tieBadge=isTie?`<span class="tie-b">Tie</span>`:'';
     const fatBarPct=barPct(r.fat_d,maxFat),muBarPct=barPct(r.mu_d,maxMu);
-    const fatBarCol=r.fat_d>=0?'#22C55E':'#EF4444',muBarCol=r.mu_d>=0?'#3B82F6':'#EF4444';
-    const fatColor=r.fat_d>=0?'#16A34A':'#DC2626',muColor=r.mu_d>=0?'#2563EB':'#DC2626';
-    html+=`<div class="rank-row ${rowClass}">${ribbon}<div class="rr-num" style="color:${isFirst?'#EAB308':isLast?'#DC2626':'#64748B'}">${numDisplay}</div><div class="avatar" style="background:${CM[r.name]}">${ini(r.name)}</div><div class="rr-name">${r.name}${tieBadge}<div class="rr-sub">${r.bf_from.toFixed(1)}% → ${r.bf_to.toFixed(1)}% fat</div></div><div class="rr-metrics"><div class="rr-metric"><div class="rr-metric-lbl">Fat</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${fatBarPct}%;background:${fatBarCol}"></div></div><div class="rr-delta" style="color:${fatColor}">${s(r.fat_d)}${f(r.fat_d)}</div></div><div class="rr-metric"><div class="rr-metric-lbl">Mu</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${muBarPct}%;background:${muBarCol}"></div></div><div class="rr-delta" style="color:${muColor}">${s(r.mu_d)}${f(r.mu_d)}</div></div></div><div class="rr-score"><div class="sv" style="color:${scolor(r.score)}">${s(r.score)}${f(Math.abs(r.score))}</div><div class="su">pp total</div></div></div>`;
+    const fatBarCol=r.fat_d>=0?'#007D48':'#D30005',muBarCol=r.mu_d>=0?'#1151FF':'#D30005';
+    const fatColor=r.fat_d>=0?'#007D48':'#D30005',muColor=r.mu_d>=0?'#1151FF':'#D30005';
+    html+=`<div class="rank-row ${rowClass}">${ribbon}<div class="rr-num" style="color:${isFirst?'#111':isLast?'#D30005':'#707072'}">${numDisplay}</div><div class="avatar" style="background:${CM(r.name)}">${ini(r.name)}</div><div class="rr-name">${r.name}${tieBadge}<div class="rr-sub">${r.bf_from.toFixed(1)}% → ${r.bf_to.toFixed(1)}% fat</div></div><div class="rr-metrics"><div class="rr-metric"><div class="rr-metric-lbl">Fat</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${fatBarPct}%;background:${fatBarCol}"></div></div><div class="rr-delta" style="color:${fatColor}">${sgn(r.fat_d)}${f(r.fat_d)}</div></div><div class="rr-metric"><div class="rr-metric-lbl">Mu</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${muBarPct}%;background:${muBarCol}"></div></div><div class="rr-delta" style="color:${muColor}">${sgn(r.mu_d)}${f(r.mu_d)}</div></div></div><div class="rr-score"><div class="sv" style="color:${scolor(r.score)}">${sgn(r.score)}${f(Math.abs(r.score))}</div><div class="su">pp</div></div></div>`;
   });
   return html+`</div>`;
 }
 
 function missedChips(names,note){
   if(!names.length)return'';
-  const chips=names.map(n=>`<div class="missed-chip"><div class="mc-av" style="background:${CM[n]||'#94A3B8'}">${ini(n)}</div>${n}</div>`).join('');
-  return`<div class="missed-section"><div class="missed-title">⏭️ Not ranked — ${note}</div><div class="missed-chips">${chips}</div></div>`;
+  const chips=names.map(n=>`<div class="missed-chip"><div class="mc-av" style="background:${CM(n)||'#707072'}">${ini(n)}</div>${n}</div>`).join('');
+  return`<div class="missed-section"><div class="missed-title">Not ranked — ${note}</div><div class="missed-chips">${chips}</div></div>`;
 }
 
 function buildPodium(rows,heading){
@@ -149,60 +159,53 @@ function buildPodium(rows,heading){
   const groups=[];let idx=0,rankNum=1;
   while(idx<scored.length&&groups.length<3){const gs=scored[idx].score;const m=[];while(idx<scored.length&&scored[idx].score===gs){m.push(scored[idx]);idx++;}groups.push({rank:rankNum,score:gs,members:m});rankNum+=m.length;}
   while(groups.length<3)groups.push(null);
-  const display=[{group:groups[1],height:60,color:'#94A3B8',label:'2ND'},{group:groups[0],height:90,color:'#EAB308',label:'1ST'},{group:groups[2],height:45,color:'#CD7F32',label:'3RD'}];
-  function personHTML(m,bc){return`<div class="podium-person"><div style="border-radius:50%;border:3px solid ${bc};padding:2px;display:inline-block"><div class="podium-av" style="background:${CM[m.name]}">${ini(m.name)}</div></div><div class="podium-pname">${m.name}</div></div>`;}
-  function slotHTML({group,height,color,label}){const sw=group&&group.members.length>1?108:88;if(!group)return`<div class="podium-slot" style="width:${sw}px"><div style="height:${height}px"></div></div>`;const sc2=group.score>0?'#16A34A':group.score<0?'#DC2626':'#64748B';const tb=group.members.length>1?`<span class="tie-b" style="margin-left:0">TIE</span>`:'';return`<div class="podium-slot" style="width:${sw}px"><div class="podium-avatar-wrap">${group.members.map(m=>personHTML(m,color)).join('')}</div><div class="podium-score" style="color:${sc2}">${group.score>=0?'+':''}${group.score.toFixed(2)}pp${tb?' '+tb:''}</div><div class="podium-step" style="height:${height}px;width:${sw}px;background:${color}"><span class="podium-step-label">${label}</span></div></div>`;}
+  const display=[{group:groups[1],height:60,color:'#CACACB',label:'2'},{group:groups[0],height:90,color:'#FCA600',label:'1'},{group:groups[2],height:45,color:'#707072',label:'3'}];
+  function personHTML(m,bc){return`<div class="podium-person"><div style="border-radius:50%;border:3px solid ${bc};padding:2px;display:inline-block"><div class="podium-av" style="background:${CM(m.name)}">${ini(m.name)}</div></div><div class="podium-pname">${m.name}</div></div>`;}
+  function slotHTML({group,height,color,label}){const sw=group&&group.members.length>1?108:88;if(!group)return`<div class="podium-slot" style="width:${sw}px"><div style="height:${height}px"></div></div>`;const sc2=scolor(group.score);const tb=group.members.length>1?`<span class="tie-b">Tie</span>`:'';return`<div class="podium-slot" style="width:${sw}px"><div class="podium-avatar-wrap">${group.members.map(m=>personHTML(m,color)).join('')}</div><div class="podium-score" style="color:${sc2}">${group.score>=0?'+':'−'}${Math.abs(group.score).toFixed(2)}pp${tb?' '+tb:''}</div><div class="podium-step" style="height:${height}px;width:${sw}px;background:${color}"><span class="podium-step-label">${label}</span></div></div>`;}
   let out=`<div class="podium-container"><div class="podium-heading">${heading||'Top 3'}</div><div class="podium-stage">`;
   for(const slot of display)out+=slotHTML(slot);
   return out+`</div></div>`;
 }
 
-// ---- Header badges (baseline + each measured round) -------------------------
 (function(){
   let h='';
   for(let st=0;st<=LATEST;st++){
-    const cls=st===LATEST?' r4':(st===LATEST-1?' r3':'');
-    const lbl=st===0?'Baseline':('Round '+st)+(st===LATEST?' ✨':'');
+    const cls=st===LATEST?' r4':'';
+    const lbl=st===0?'Baseline':('Round '+st);
     h+=`<div class="hbadge${cls}"><div class="hl">${lbl}</div><div class="hv">${R.STAGE_DATES[st]} 2026</div></div>`;
   }
   document.getElementById('hbadges').innerHTML=h;
 })();
 
-// ---- Round blocks, latest first ---------------------------------------------
 let html='';
-const EMO=['','🔵','🟢','⚡','✨','🔶','🟣','🟠','⭐'];
 for(let st=LATEST;st>=1;st--){
   const measured=measuredNames(st);
   const n=NAMES.length, k=measured.length, absent=NAMES.filter(x=>!meas(x,st));
-  const isLatest=st===LATEST, isPrev=st===LATEST-1;
-  const hdrClass=isLatest?'r4hdr':(isPrev?'r3hdr':'');
-  const title=`${EMO[st]||'•'} Round ${st} Rankings${isLatest?' — Latest':''}`;
-  const sub=`${R.STAGE_DATES[st]} 2026 · ${k} of ${n} participants measured${absent.length?` · ${absent.length} absent`:''}`;
-  // vs baseline
+  const isLatest=st===LATEST;
+  const tag=isLatest?`<span class="latest-tag">Latest</span>`:'';
+  const sub=`${R.STAGE_DATES[st]} 2026 · ${k} of ${n} measured${absent.length?` · ${absent.length} absent`:''}`;
   const vsBase=measured.map(name=>({name,bf_from:baseOf(A[name]).bf,mu_from:baseOf(A[name]).mu,bf_to:meas(name,st).bf,mu_to:meas(name,st).mu}));
-  // vs previous measured round (st-1)
   let vsPrev,prevNote=null;
-  if(st===1){
-    vsPrev=vsBase; // first round: previous == baseline
-  }else{
+  if(st===1){ vsPrev=vsBase; }
+  else{
     const havePrev=measured.filter(name=>meas(name,st-1));
     const noPrev=measured.filter(name=>!meas(name,st-1));
     vsPrev=havePrev.map(name=>({name,bf_from:meas(name,st-1).bf,mu_from:meas(name,st-1).mu,bf_to:meas(name,st).bf,mu_to:meas(name,st).mu}));
-    if(noPrev.length)prevNote=`⚠️ ${noPrev.join(', ')} skipped R${st-1} — excluded from R${st-1}→R${st} ranking`;
+    if(noPrev.length)prevNote=`${noPrev.join(', ')} skipped R${st-1} — excluded from R${st-1}→R${st} ranking`;
   }
-  html+=`<div class="round-block"><div class="round-header ${hdrClass}"><div><h2>${title}</h2><div class="sub">${sub}</div></div><div class="round-count-badge">${k} / ${n} measured</div></div>`;
-  html+=buildPodium(vsBase,`Round ${st} Podium — Cumulative vs Baseline`);
+  html+=`<div class="round-block"><div class="round-header${isLatest?' latest':''}"><div><h2>Round ${st}${tag}</h2><div class="sub">${sub}</div></div><div class="round-count-badge">${k} / ${n} measured</div></div>`;
+  html+=buildPodium(vsBase,`Round ${st} podium — cumulative vs baseline`);
   html+=`<div class="rank-cols">`;
-  const prevTitle=st===1?'📈 vs Previous (= Baseline)':`📈 vs Previous Round (R${st-1}→R${st})`;
-  const prevSub=st===1?'Round 1 is the first measurement — same as vs baseline':`Improvement made specifically in Round ${st}`;
-  html+=buildRankPanel(prevTitle,prevSub,'#A855F7','#A855F7',vsPrev,prevNote);
-  html+=buildRankPanel('📊 vs Baseline (Cumulative)',`Total change from ${R.STAGE_DATES[0]} 2026 to Round ${st}`,'#6366F1','#6366F1',vsBase,null);
+  const prevTitle=st===1?'vs Previous (= baseline)':`vs Previous (R${st-1}→R${st})`;
+  const prevSub=st===1?'First round — same as vs baseline':`Improvement made in Round ${st}`;
+  html+=buildRankPanel(prevTitle,prevSub,st===1?'Baseline':`R${st-1}→R${st}`,vsPrev,prevNote);
+  html+=buildRankPanel('vs Baseline (cumulative)',`Total change from ${R.STAGE_DATES[0]} 2026`,'vs Base',vsBase,null);
   html+=`</div>`;
   html+=missedChips(absent,`Absent Round ${st}`);
   html+=`</div>`;
 }
 document.getElementById('leaderboard').innerHTML=html;
-document.getElementById('footer').innerHTML=`Data source: Mija Body Composition Scale S400 &nbsp;·&nbsp; Campaign: ${R.STAGE_DATES[0]} – ${R.STAGE_DATES[LATEST]} 2026 &nbsp;·&nbsp; ${NAMES.length} participants`;
+document.getElementById('footer').innerHTML=`Mija Body Composition Scale S400 &nbsp;·&nbsp; ${R.STAGE_DATES[0]} – ${R.STAGE_DATES[LATEST]} 2026 &nbsp;·&nbsp; ${NAMES.length} athletes`;
 </script>
 </body>
 </html>
