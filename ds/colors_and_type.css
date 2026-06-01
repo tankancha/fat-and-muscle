@@ -1,0 +1,354 @@
+/*
+ * INVESTORY DESIGN SYSTEM — colors_and_type.css
+ * Blue-green gradient palette (Devin-inspired) × Stripe precision
+ * AI Trading & Journaling Platform
+ */
+
+@import url('./fonts/geist.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* ═══════════════════════════════════════════════════
+   ROOT TOKENS
+   ═══════════════════════════════════════════════════ */
+:root {
+
+  /* ─── BRAND PRIMARIES ─────────────────────────── */
+  --color-brand-blue:       #1A6FFF;
+  --color-brand-cyan:       #00B4D8;
+  --color-brand-teal:       #00D4A0;
+  --color-brand-blue-dark:  #1256CC;
+  --color-brand-teal-dark:  #00A87E;
+  --color-brand-blue-pale:  #C8DDFF;
+  --color-brand-teal-pale:  #B8F0E2;
+
+  /* ─── BRAND GRADIENTS — core visual signature ─── */
+  --grad-brand:        linear-gradient(135deg, #1A6FFF 0%, #00B4D8 55%, #00D4A0 100%);
+  --grad-brand-135:    linear-gradient(135deg, #1A6FFF 0%, #00D4A0 100%);
+  --grad-brand-90:     linear-gradient(90deg,  #1A6FFF 0%, #00B4D8 50%, #00D4A0 100%);
+  --grad-brand-text:   linear-gradient(90deg,  #1A6FFF 0%, #00C0C0 50%, #00D4A0 100%);
+  --grad-brand-subtle: linear-gradient(135deg, rgba(26,111,255,0.10) 0%, rgba(0,212,160,0.06) 100%);
+  --grad-glow:         radial-gradient(ellipse 80% 50% at 50% -10%, rgba(26,111,255,0.28) 0%, transparent 65%);
+  --grad-glow-teal:    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,212,160,0.20) 0%, transparent 60%);
+  --grad-surface-dark: radial-gradient(ellipse 100% 60% at 50% 0%, rgba(0,180,216,0.10) 0%, transparent 55%);
+
+  /* ─── SEMANTIC — Trading ─────────────────────── */
+  --color-bullish:           #00C896;
+  --color-bullish-subtle:    rgba(0,200,150,0.12);
+  --color-bullish-border:    rgba(0,200,150,0.30);
+  --color-bullish-text:      #00A87E;
+  --color-bearish:           #FF4D6A;
+  --color-bearish-subtle:    rgba(255,77,106,0.12);
+  --color-bearish-border:    rgba(255,77,106,0.30);
+  --color-bearish-text:      #CC3D55;
+  --color-warning:           #F5A623;
+  --color-warning-subtle:    rgba(245,166,35,0.12);
+  --color-warning-border:    rgba(245,166,35,0.30);
+  --color-info:              #38BDF8;
+  --color-info-subtle:       rgba(56,189,248,0.12);
+  --color-info-border:       rgba(56,189,248,0.30);
+  --color-neutral-pnl:       #8899AA;
+
+  /* ─── DARK NEUTRAL SCALE ─────────────────────── */
+  --dark-0:  #03060F;    /* shell / deepest */
+  --dark-1:  #070D1C;    /* page background */
+  --dark-2:  #0C1428;    /* surface / card base */
+  --dark-3:  #12203A;    /* elevated surface */
+  --dark-4:  #192C4F;    /* hover / active */
+  --dark-5:  #213A64;    /* border emphasis */
+  --dark-6:  #2C4E80;    /* muted accent */
+  --dark-7:  #3A6299;    /* subtle highlight */
+
+  /* DARK FOREGROUND */
+  --dark-fg-0: #FFFFFF;                  /* primary */
+  --dark-fg-1: rgba(255,255,255,0.84);   /* secondary */
+  --dark-fg-2: rgba(255,255,255,0.54);   /* muted */
+  --dark-fg-3: rgba(255,255,255,0.32);   /* disabled / placeholder */
+  --dark-fg-4: rgba(255,255,255,0.14);   /* borders */
+  --dark-fg-5: rgba(255,255,255,0.06);   /* subtle dividers */
+
+  /* ─── LIGHT NEUTRAL SCALE ────────────────────── */
+  --light-0:  #F4F7FF;   /* page background */
+  --light-1:  #FFFFFF;   /* surface */
+  --light-2:  #EBF0FF;   /* subtle surface */
+  --light-3:  #DDE6FF;   /* active / selected */
+  --light-4:  #C8D5F5;   /* border active */
+  --light-5:  #E5EDF5;   /* border default (Stripe) */
+  --light-6:  #F0F4FC;   /* hover */
+
+  /* LIGHT FOREGROUND (Stripe-inspired navies) */
+  --light-fg-0: #060B18;   /* primary headings */
+  --light-fg-1: #1A2945;   /* secondary / labels */
+  --light-fg-2: #4A6080;   /* body text */
+  --light-fg-3: #7A90AA;   /* muted */
+  --light-fg-4: #C8D5E5;   /* borders */
+
+  /* ─── SHADOWS — Blue-tinted (Stripe) + glow ─── */
+  --shadow-0:    none;
+  --shadow-1:    0 1px 3px rgba(6,11,24,0.16),
+                 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-2:    0 4px 14px rgba(26,111,255,0.10),
+                 0 2px 6px rgba(0,0,0,0.08);
+  --shadow-3:    0 16px 40px rgba(26,111,255,0.14),
+                 0 6px 16px rgba(0,0,0,0.10);
+  --shadow-4:    0 24px 64px rgba(26,111,255,0.18),
+                 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-glow: 0 0 24px rgba(0,212,160,0.22),
+                 0 0 60px rgba(26,111,255,0.10);
+  --shadow-focus:  0 0 0 3px rgba(26,111,255,0.35);
+  --shadow-focus-teal: 0 0 0 3px rgba(0,212,160,0.30);
+
+  /* Light theme shadows (Stripe authentic) */
+  --shadow-light-1: rgba(50,50,93,0.06) 0px 4px 12px,
+                    rgba(0,0,0,0.04) 0px 2px 4px;
+  --shadow-light-2: rgba(50,50,93,0.12) 0px 12px 30px -8px,
+                    rgba(0,0,0,0.06) 0px 6px 14px -6px;
+  --shadow-light-3: rgba(50,50,93,0.22) 0px 28px 44px -24px,
+                    rgba(0,0,0,0.08) 0px 16px 32px -16px;
+
+  /* ─── BORDER RADIUS — Conservative (Stripe) ──── */
+  --radius-xs:   2px;
+  --radius-sm:   4px;    /* badges, inline elements */
+  --radius-md:   6px;    /* buttons, inputs, cards */
+  --radius-lg:   8px;    /* panels, featured cards */
+  --radius-xl:   12px;   /* modals, drawers */
+  --radius-2xl:  16px;   /* hero containers */
+  --radius-full: 9999px; /* pills, avatars, chips */
+
+  /* ─── BORDERS ─────────────────────────────────── */
+  /* Dark */
+  --border-dark:         1px solid rgba(255,255,255,0.08);
+  --border-dark-subtle:  1px solid rgba(255,255,255,0.04);
+  --border-dark-strong:  1px solid rgba(255,255,255,0.16);
+  --border-brand:        1px solid rgba(26,111,255,0.38);
+  --border-teal:         1px solid rgba(0,212,160,0.38);
+  /* Light */
+  --border-light:        1px solid #E5EDF5;
+  --border-light-subtle: 1px solid #EBF0FF;
+  --border-light-brand:  1px solid rgba(26,111,255,0.22);
+  --border-light-teal:   1px solid rgba(0,212,160,0.28);
+
+  /* ─── SPACING — 8px base unit ─────────────────── */
+  --space-px:  1px;
+  --space-0-5: 2px;
+  --space-1:   4px;
+  --space-1-5: 6px;
+  --space-2:   8px;
+  --space-2-5: 10px;
+  --space-3:   12px;
+  --space-3-5: 14px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-7:   28px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-20:  80px;
+  --space-24:  96px;
+
+  /* ─── TYPOGRAPHY ─────────────────────────────── */
+  --font-sans: 'Geist', 'Plus Jakarta Sans', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+  --font-script: 'Great Vibes', 'Pacifico', cursive;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* Size scale */
+  --text-display:  52px;
+  --text-display-sm: 44px;
+  --text-h1:       36px;
+  --text-h2:       28px;
+  --text-h3:       22px;
+  --text-h4:       18px;
+  --text-h5:       16px;
+  --text-body-lg:  18px;
+  --text-body:     16px;
+  --text-sm:       14px;
+  --text-xs:       12px;
+  --text-2xs:      11px;
+  --text-3xs:      10px;
+
+  /* Weights */
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* Line heights */
+  --leading-none:    1.0;
+  --leading-tight:   1.08;
+  --leading-heading: 1.15;
+  --leading-snug:    1.28;
+  --leading-body:    1.55;
+  --leading-relaxed: 1.70;
+
+  /* Letter spacing */
+  --tracking-display: -1.6px;
+  --tracking-h1:      -0.8px;
+  --tracking-h2:      -0.4px;
+  --tracking-h3:      -0.2px;
+  --tracking-h4:      -0.1px;
+  --tracking-body:     0;
+  --tracking-caps:     0.06em;
+  --tracking-tnum:    -0.02em;  /* financial tabular nums */
+
+  /* ─── MOTION ─────────────────────────────────── */
+  --ease-default: cubic-bezier(0.16, 1, 0.3, 1);  /* expo out */
+  --ease-in:      cubic-bezier(0.4, 0, 1, 1);
+  --ease-out:     cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:     100ms;
+  --dur-base:     180ms;
+  --dur-slow:     320ms;
+  --dur-slower:   500ms;
+
+}
+
+/* ═══════════════════════════════════════════════════
+   SEMANTIC ALIASES — applied by theme
+   ═══════════════════════════════════════════════════ */
+
+[data-theme="dark"], .theme-dark {
+  color-scheme: dark;
+  --bg:          var(--dark-1);
+  --bg-surface:  var(--dark-2);
+  --bg-elevated: var(--dark-3);
+  --bg-hover:    var(--dark-4);
+  --fg:          var(--dark-fg-0);
+  --fg-1:        var(--dark-fg-1);
+  --fg-2:        var(--dark-fg-2);
+  --fg-3:        var(--dark-fg-3);
+  --fg-border:   var(--dark-fg-4);
+  --bd:          var(--border-dark);
+  --bd-subtle:   var(--border-dark-subtle);
+  --sh:          var(--shadow-2);
+}
+
+[data-theme="light"], .theme-light {
+  color-scheme: light;
+  --bg:          var(--light-0);
+  --bg-surface:  var(--light-1);
+  --bg-elevated: var(--light-2);
+  --bg-hover:    var(--light-6);
+  --fg:          var(--light-fg-0);
+  --fg-1:        var(--light-fg-1);
+  --fg-2:        var(--light-fg-2);
+  --fg-3:        var(--light-fg-3);
+  --fg-border:   var(--light-fg-4);
+  --bd:          var(--border-light);
+  --bd-subtle:   var(--border-light-subtle);
+  --sh:          var(--shadow-light-2);
+}
+
+/* ═══════════════════════════════════════════════════
+   TYPOGRAPHY UTILITY CLASSES
+   ═══════════════════════════════════════════════════ */
+
+.t-display {
+  font-family: var(--font-sans);
+  font-size: var(--text-display);
+  font-weight: var(--weight-light);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+}
+.t-display-sm {
+  font-family: var(--font-sans);
+  font-size: var(--text-display-sm);
+  font-weight: var(--weight-light);
+  line-height: var(--leading-tight);
+  letter-spacing: -1.2px;
+}
+.t-h1 {
+  font-family: var(--font-sans);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-h1);
+}
+.t-h2 {
+  font-family: var(--font-sans);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-h2);
+}
+.t-h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-h3);
+}
+.t-h4 {
+  font-family: var(--font-sans);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-h4);
+}
+.t-body-lg {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-lg);
+  font-weight: var(--weight-light);
+  line-height: var(--leading-body);
+}
+.t-body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+}
+.t-sm {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+}
+.t-xs {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+}
+.t-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tnum);
+}
+.t-mono-sm {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tnum);
+}
+.t-mono-lg {
+  font-family: var(--font-mono);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tnum);
+}
+
+/* Gradient text */
+.t-gradient {
+  background: var(--grad-brand-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Tabular nums shorthand */
+.t-tabular {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-tnum);
+}

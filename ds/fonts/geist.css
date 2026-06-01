@@ -1,0 +1,15 @@
+/* Geist — variable font (covers weights 100–900) */
+@font-face {
+  font-family: 'Geist';
+  src: url('./Geist_wght_.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist';
+  src: url('./Geist-Italic_wght_.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}

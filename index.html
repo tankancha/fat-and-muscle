@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Fat &amp; Muscle Campaign — Stadium Race</title>
+<link rel="stylesheet" href="ds/colors_and_type.css"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: #000;
+    color: var(--dark-fg-0);
+    font-family: var(--font-sans);
+    overflow: hidden;
+  }
+  #root { height: 100vh; }
+  .fitroot { position: fixed; inset: 0; background: #000; display: grid; place-items: center; overflow: hidden; }
+
+  /* ---------- App shell (fixed design canvas, scaled to fit) ---------- */
+  .app {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 2px;
+    background:
+      radial-gradient(ellipse 70% 42% at 50% -8%, rgba(0,212,160,0.16) 0%, transparent 60%),
+      radial-gradient(ellipse 90% 55% at 50% -12%, rgba(26,111,255,0.22) 0%, transparent 62%),
+      var(--dark-0);
+    position: relative;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex; align-items: center; gap: var(--space-4);
+    padding: 14px 22px;
+    border-bottom: var(--border-dark);
+    flex-shrink: 0;
+    z-index: 6;
+    background: rgba(7,13,28,0.55);
+    backdrop-filter: blur(8px);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand .mark {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--grad-brand-135);
+    display: grid; place-items: center;
+    box-shadow: var(--shadow-glow);
+    font-weight: 800; font-size: 15px; color: #04121a;
+  }
+  .brand h1 { font-size: 16px; font-weight: 600; margin: 0; letter-spacing: -0.2px; }
+  .brand .sub { font-size: 11px; color: var(--dark-fg-2);
+    text-transform: uppercase; letter-spacing: 0.08em; }
+  .topstats { margin-left: auto; display: flex; gap: 26px; align-items: center; }
+  .tstat { text-align: right; }
+  .tstat .k { font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--dark-fg-2); }
+  .tstat .v { font-family: var(--font-mono); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .tstat .v.lead { color: var(--color-brand-teal); }
+
+  /* ---------- Stadium / stage ---------- */
+  .stage {
+    flex: 1; position: relative; overflow: hidden;
+    padding: 10px 26px 6px 18px;
+    display: flex; flex-direction: column;
+  }
+  /* floodlights + stands behind the track */
+  .sky { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+  .pylon { position: absolute; top: 0; width: 2px; height: 64px; background: linear-gradient(var(--dark-5), transparent); }
+  .lamp { position: absolute; top: 58px; width: 56px; height: 16px; border-radius: 4px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(0,212,160,0.4));
+    filter: blur(0.4px);
+    box-shadow: 0 0 34px 10px rgba(0,212,160,0.30), 0 0 80px 30px rgba(26,111,255,0.18); }
+  .stands {
+    position: absolute; left: 0; right: 0; top: 78px; height: 70px; z-index: 0;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 3px, transparent 3px 9px),
+      repeating-linear-gradient(180deg, var(--dark-3) 0 8px, var(--dark-2) 8px 16px);
+    opacity: 0.5;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+  }
+
+  /* ---------- Track ---------- */
+  .trackwrap { position: relative; flex: 1; z-index: 2; margin-top: 40px; min-height: 0; }
+  .track {
+    position: absolute; inset: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background:
+      linear-gradient(180deg, rgba(18,32,58,0.5), rgba(7,13,28,0.5));
+    overflow: hidden;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.4), var(--shadow-3);
+  }
+  /* the gutter (leaderboard) column width */
+  .track { --gutter: 232px; --padR: 92px; }
+
+  .lanes { position: absolute; inset: 0; }
+  .lane {
+    position: absolute; left: 0; right: 0; height: 0;
+    transition: none;
+    display: flex; align-items: stretch;
+  }
+  .lane.firstplace .gutter { box-shadow: inset 0 0 0 1px rgba(0,212,160,0.5); background: linear-gradient(90deg, rgba(0,40,34,0.92), rgba(12,20,40,0.74)); }
+  .lane-stripe-area { position: absolute; left: var(--gutter); right: 0; top: 0; bottom: 0; }
+
+  /* gutter = inline leaderboard */
+  .gutter {
+    width: var(--gutter); flex-shrink: 0;
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 10px 0 12px;
+    border-right: 1px solid rgba(255,255,255,0.07);
+    background: linear-gradient(90deg, rgba(12,20,40,0.92), rgba(12,20,40,0.74));
+    z-index: 3; overflow: hidden;
+  }
+  /* lane divider stripes on the track (fixed lanes, like a real track) */
+  .laneline { position: absolute; left: 0; right: 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .laneline.alt { background: rgba(255,255,255,0.014); }
+
+  .lanedot {
+    width: 13px; height: 13px; flex-shrink: 0; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.45);
+  }
+
+  .gutter .meta { min-width: 0; flex: 1; display: flex; flex-direction: column; justify-content: center; line-height: 1; }
+  .gutter .nm { font-size: 13.5px; font-weight: 600; line-height: 1.15; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .gutter .nm .nmtxt { flex-shrink: 0; }
+  .gutter .nm .sx { font-size: 8.5px; font-weight: 700; letter-spacing: 0.05em; padding: 1px 4px; border-radius: 3px; flex-shrink: 0; }
+  .sx.f { background: rgba(255,77,106,0.16); color: #ff8fa3; }
+  .sx.m { background: rgba(56,189,248,0.16); color: #7dd3fc; }
+  .gutter .row2 { display: flex; align-items: center; gap: 7px; margin-top: 4px; line-height: 1; }
+  .ranknow {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    font-variant-numeric: tabular-nums; color: var(--dark-fg-1);
+    background: rgba(255,255,255,0.06); border-radius: 3px; padding: 1px 5px;
+  }
+  .lane.firstplace .ranknow { color: #04121a; background: var(--color-brand-teal); }
+  .leadstar { color: var(--color-brand-teal); font-size: 11px; }
+  .scorepill {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    font-variant-numeric: tabular-nums; line-height: 1;
+    color: var(--color-brand-teal);
+  }
+  .delta { font-family: var(--font-mono); font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 1px; }
+  .delta.up { color: var(--color-bullish); }
+  .delta.down { color: var(--color-bearish); }
+  .delta.flat { color: var(--dark-fg-2); }
+  .missedtag {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--color-warning); background: var(--color-warning-subtle);
+    border: 1px solid var(--color-warning-border); border-radius: 3px; padding: 1px 4px;
+  }
+
+  /* yard lines + finish in stripe area */
+  .yard { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.06); }
+  .yard .yl { position: absolute; bottom: 4px; left: 4px; font-size: 9px; color: var(--dark-fg-3); font-family: var(--font-mono); }
+  .startline { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.22); }
+  .finishline {
+    position: absolute; top: 0; bottom: 0; width: 12px;
+    background-image:
+      linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%),
+      linear-gradient(45deg, #fff 25%, #0b1020 25%, #0b1020 75%, #fff 75%);
+    background-size: 12px 12px; background-position: 0 0, 6px 6px;
+    opacity: 0.85;
+  }
+  .flag {
+    position: absolute; top: 6px; display: flex; flex-direction: column; align-items: center;
+    transform: translateX(-50%); z-index: 2; pointer-events: none;
+  }
+  .flag .pole { width: 2px; height: 999px; position: absolute; top: 14px; background: rgba(255,255,255,0.12); }
+  .flag .pennant {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.08); color: var(--dark-fg-2);
+    border: 1px dashed rgba(255,255,255,0.22);
+    white-space: nowrap;
+  }
+  .flag.fin .pennant { background: var(--grad-brand-135); color: #04121a; border: none; box-shadow: var(--shadow-glow); }
+  .flag.fin .pole { background: rgba(0,212,160,0.4); }
+
+  /* the runner travelling on the track */
+  .runnerlane {
+    position: absolute; top: 0; bottom: 0;
+    left: var(--gutter); right: var(--padR);
+  }
+  .runslot {
+    position: absolute; bottom: 0; height: 100%;
+    transition: left 1850ms cubic-bezier(0.42, 0.03, 0.4, 1);
+    display: flex; align-items: flex-end; justify-content: center;
+    transform: translateX(-50%);
+  }
+  .lanes.continuous .runslot { transition: none; }
+  .runslot .tag {
+    position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    margin-bottom: -2px;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    color: var(--dark-fg-1); white-space: nowrap; pointer-events: none;
+    background: rgba(7,13,28,0.7); padding: 1px 5px; border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .dust {
+    position: absolute; bottom: 6px; right: 100%; width: 22px; height: 14px;
+    background: radial-gradient(circle, rgba(255,255,255,0.16), transparent 70%);
+    opacity: 0; border-radius: 50%;
+  }
+  .runslot.moving .dust { animation: dust 0.5s linear infinite; }
+  @keyframes dust { 0%{opacity:0; transform:translateX(0) scale(0.6)} 40%{opacity:0.7} 100%{opacity:0; transform:translateX(-16px) scale(1.2)} }
+
+  /* runner limb cycle */
+  .runner .leg, .runner .arm { transform-box: view-box; }
+  .runner.run .legA { animation: legSwing var(--run-dur,0.5s) linear infinite; }
+  .runner.run .legB { animation: legSwing var(--run-dur,0.5s) linear infinite; animation-delay: calc(var(--run-dur,0.5s) * -0.5); }
+  .runner.run .armA { animation: armSwingF var(--run-dur,0.5s) linear infinite; }
+  .runner.run .armB { animation: armSwingB var(--run-dur,0.5s) linear infinite; }
+  .runner.run .torso { animation: bob var(--run-dur,0.5s) linear infinite; transform-box: view-box; }
+  .runner.idle .legA { transform: rotate(14deg); transform-box: view-box; }
+  .runner.idle .legB { transform: rotate(-12deg); transform-box: view-box; }
+  .runner.idle .armA { transform: rotate(-8deg); transform-box: view-box; }
+  .runner.idle .armB { transform: rotate(8deg); transform-box: view-box; }
+  @keyframes legSwing { 0%{transform:rotate(32deg)} 50%{transform:rotate(-34deg)} 100%{transform:rotate(32deg)} }
+  @keyframes armSwingF { 0%{transform:rotate(-36deg)} 50%{transform:rotate(32deg)} 100%{transform:rotate(-36deg)} }
+  @keyframes armSwingB { 0%{transform:rotate(36deg)} 50%{transform:rotate(-32deg)} 100%{transform:rotate(36deg)} }
+  @keyframes bob { 0%{transform:translateY(0)} 25%{transform:translateY(-2px)} 50%{transform:translateY(0)} 75%{transform:translateY(-2px)} 100%{transform:translateY(0)} }
+
+  /* rested (missed week) marker on a still runner */
+  .rested { position: absolute; bottom: 78%; left: 58%; font-size: 13px; color: var(--color-warning); opacity: 0.85;
+    animation: zfloat 2.4s ease-in-out infinite; font-family: var(--font-mono); }
+  @keyframes zfloat { 0%,100%{transform:translateY(0); opacity:0.4} 50%{transform:translateY(-6px); opacity:0.9} }
+
+  /* ---------- Controls ---------- */
+  .controls {
+    flex-shrink: 0; z-index: 6;
+    display: flex; align-items: center; gap: 18px;
+    padding: 12px 22px 14px;
+    border-top: var(--border-dark);
+    background: rgba(7,13,28,0.6); backdrop-filter: blur(8px);
+  }
+  .playbtn {
+    width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: var(--grad-brand-135); color: #04121a;
+    display: grid; place-items: center;
+    box-shadow: var(--shadow-glow);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .playbtn:active { transform: scale(0.94); }
+  .stepbtn {
+    width: 36px; height: 36px; border-radius: 8px; cursor: pointer;
+    background: var(--dark-3); color: var(--dark-fg-1);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: grid; place-items: center;
+    transition: background var(--dur-fast);
+  }
+  .stepbtn:hover { background: var(--dark-4); }
+  .stepbtn:disabled { opacity: 0.32; cursor: default; }
+
+  .timeline { flex: 1; display: flex; align-items: center; gap: 0; padding: 0 6px; }
+  .tl-track { position: relative; flex: 1; height: 4px; border-radius: 2px;
+    background: var(--dark-4); margin: 0 16px; }
+  .tl-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px;
+    background: var(--grad-brand-90); transition: width 400ms var(--ease-default); }
+  .tl-node {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    display: flex; flex-direction: column; align-items: center; cursor: pointer;
+    background: none; border: none; padding: 0;
+  }
+  .tl-dot {
+    width: 13px; height: 13px; border-radius: 50%;
+    background: var(--dark-2); border: 2px solid var(--dark-6);
+    transition: all var(--dur-base);
+  }
+  .tl-node.done .tl-dot { background: var(--color-brand-teal); border-color: var(--color-brand-teal); }
+  .tl-node.current .tl-dot { background: #fff; border-color: var(--color-brand-teal);
+    box-shadow: 0 0 0 4px rgba(0,212,160,0.25); transform: scale(1.25); }
+  .tl-node.future .tl-dot { border-style: dashed; opacity: 0.6; }
+  .tl-node .lab { position: absolute; top: 16px; font-size: 10px; font-weight: 600;
+    color: var(--dark-fg-2); white-space: nowrap; }
+  .tl-node .dt { position: absolute; top: 28px; font-size: 9px; font-family: var(--font-mono); color: var(--dark-fg-3); white-space: nowrap; }
+  .tl-node.current .lab { color: #fff; }
+  .tl-node.future .lab, .tl-node.future .dt { opacity: 0.5; }
+
+  .nowlabel { min-width: 188px; }
+  .nowlabel .k { font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--dark-fg-2); }
+  .nowlabel .v { font-size: 15px; font-weight: 600; margin-top: 1px; }
+  .nowlabel .v em { font-style: normal; color: var(--color-brand-teal); font-family: var(--font-mono); }
+
+  .spot-toggle {
+    margin-left: auto; display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 15px; border-radius: 8px; cursor: pointer;
+    background: var(--dark-3); color: var(--dark-fg-1); font-size: 13px; font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .spot-toggle:hover { background: var(--dark-4); }
+
+  /* ---------- Winner spotlight ---------- */
+  .spotlight { position: absolute; inset: 0; z-index: 20; display: none; }
+  .spotlight.on { display: block; }
+  .spot-scrim { position: absolute; inset: 0; background: rgba(3,6,15,0.78); backdrop-filter: blur(3px); animation: fade 0.4s var(--ease-out); }
+  @keyframes fade { from{opacity:0} to{opacity:1} }
+  .beam {
+    position: absolute; top: -4%; left: 50%; transform: translateX(-50%);
+    width: 340px; height: 116%;
+    background: linear-gradient(180deg, rgba(0,212,160,0.34), rgba(0,212,160,0.04) 60%, transparent);
+    clip-path: polygon(42% 0, 58% 0, 88% 100%, 12% 100%);
+    filter: blur(2px);
+  }
+  .winnercard {
+    position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%);
+    width: min(640px, 88%);
+    background: linear-gradient(180deg, var(--dark-3), var(--dark-2));
+    border: 1px solid rgba(0,212,160,0.4); border-radius: 16px;
+    box-shadow: var(--shadow-4), var(--shadow-glow);
+    padding: 22px 26px; display: flex; gap: 22px; align-items: center;
+    animation: rise 0.5s var(--ease-spring);
+  }
+  @keyframes rise { from{opacity:0; transform:translate(-50%, 24px)} to{opacity:1; transform:translate(-50%,0)} }
+  .winnercard .crown { position: absolute; top: -34px; left: 50%; transform: translateX(-50%); font-size: 30px; }
+  .winnercard .wfig { width: 130px; flex-shrink: 0; display: grid; place-items: center; }
+  .winnercard .winfo { flex: 1; }
+  .winnercard .elabel { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-brand-teal); font-weight: 700; }
+  .winnercard h2 { margin: 4px 0 2px; font-size: 30px; font-weight: 600; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+  .winnercard .wsub { color: var(--dark-fg-2); font-size: 13px; }
+  .winstats { display: flex; gap: 26px; margin-top: 14px; }
+  .winstats .ws .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dark-fg-2); }
+  .winstats .ws .v { font-family: var(--font-mono); font-size: 22px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .winstats .ws .v.g { color: var(--color-bullish); }
+  .winclose { position: absolute; top: 12px; right: 14px; cursor: pointer; background: none; border: none; color: var(--dark-fg-2); font-size: 20px; line-height: 1; }
+  .winclose:hover { color: #fff; }
+
+  @media (max-width: 880px) {
+    .track { --gutter: 150px; --padR: 64px; }
+    .topstats { display: none; }
+  }
+</style>
+</head>
+<body class="theme-dark">
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="data.js"></script>
+<script type="text/babel" src="AnimeRunner.jsx"></script>
+<script type="text/babel" src="RaceApp.jsx"></script>
+<script type="text/babel">
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(RaceApp));
+</script>
+</body>
+</html>
