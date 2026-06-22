@@ -48,6 +48,15 @@
       Pruang:[19.6,76.1], Nott:[22.1,73.8], Orawan:[36.3,60], Jue:[29.2,67],
       Piyathida:[22.5,73.1], Best:[25,71], Bob:[31.6,64.7], Ben:[26,70.1],
     },
+    5: {  // missed: Ohm, Wason, Nott, Ann, Piyathida, Best, Sonny
+      Maneenund:[37.9,58.3], Pipat:[20,75.8], Pruang:[19.2,76.4], Orawan:[36.5,59.7],
+      Jue:[29.3,66.9], Bob:[31.8,64.5], Ben:[26.2,69.9],
+    },
+    6: {  // missed: Maneenund, Wason, Jue, Best, Sonny
+      Ohm:[36,60.6], Pipat:[19.5,76.3], Pruang:[18.9,76.7], Nott:[22.7,73.2],
+      Orawan:[36.4,59.8], Ann:[23.5,72.4], Piyathida:[23.5,72.1], Bob:[32.3,64.1],
+      Ben:[25.5,70.5],
+    },
   };
 
   const STYLE = {
