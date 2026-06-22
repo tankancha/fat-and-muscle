@@ -35,7 +35,7 @@ try:
 except ImportError:
     sys.exit("openpyxl is required:  pip install openpyxl")
 
-DEFAULT_XLSX = r"C:\Users\Admin\OneDrive\Claude Cowork\03_Projects\Fat and Muscle\Fat and Muscle\Fat_Muscle_Measurements.xlsx"
+DEFAULT_XLSX = r"C:\Users\Admin\OneDrive\AIOS\areas\general\projects\fat-and-muscle\scripts\data\Fat_Muscle_Measurements.xlsx"
 
 NON_NAME = {"name", "group average", ""}
 

@@ -1,10 +1,10 @@
 <#
-  refresh.ps1 — one-command refresh of the Stadium Race from the spreadsheet.
+  refresh.ps1 - one-command refresh of the Stadium Race from the spreadsheet.
 
   What it does:
     1. Copies your working spreadsheet into the repo (data/Fat_Muscle_Measurements.xlsx)
     2. Regenerates data.js via build_data.py
-    3. Commits and pushes — Vercel then redeploys automatically
+    3. Commits and pushes - Vercel then redeploys automatically
 
   Usage (from the repo folder):
     .\refresh.ps1                          # uses the default spreadsheet path + auto commit message
@@ -13,9 +13,11 @@
     .\refresh.ps1 -NoPush                  # build + commit only, push manually later
 
   Before running: SAVE and CLOSE the spreadsheet in Excel so the copy is current.
+  ASCII-only on purpose: Windows PowerShell 5.1 mis-parses this file if it
+  contains non-ASCII characters (e.g. em-dashes), so keep it plain ASCII.
 #>
 param(
-  [string]$Xlsx = "C:\Users\Admin\OneDrive\Claude Cowork\03_Projects\Fat and Muscle\Fat and Muscle\Fat_Muscle_Measurements.xlsx",
+  [string]$Xlsx = "C:\Users\Admin\OneDrive\AIOS\areas\general\projects\fat-and-muscle\scripts\data\Fat_Muscle_Measurements.xlsx",
   [string]$Message = "",
   [switch]$NoPush
 )
@@ -29,9 +31,17 @@ if (-not (Test-Path $Xlsx)) {
 }
 
 # 1. Copy the spreadsheet into the repo so the build is reproducible.
+#    Skip if the source already IS the repo copy (avoids a copy-onto-itself error).
 New-Item -ItemType Directory -Force -Path "$repo\data" | Out-Null
-Copy-Item $Xlsx "$repo\data\Fat_Muscle_Measurements.xlsx" -Force
-Write-Host "Copied spreadsheet into repo." -ForegroundColor Green
+$dest = Join-Path $repo "data\Fat_Muscle_Measurements.xlsx"
+$srcFull = (Resolve-Path $Xlsx).Path
+$destFull = if (Test-Path $dest) { (Resolve-Path $dest).Path } else { $dest }
+if ($srcFull -ne $destFull) {
+  Copy-Item $Xlsx $dest -Force
+  Write-Host "Copied spreadsheet into repo." -ForegroundColor Green
+} else {
+  Write-Host "Source is already the repo copy; skipping copy." -ForegroundColor Green
+}
 
 # 2. Regenerate data.js.
 python "$repo\build_data.py"
@@ -41,7 +51,7 @@ if ($LASTEXITCODE -ne 0) { Write-Error "build_data.py failed."; exit 1 }
 git -C $repo add -A
 $pending = git -C $repo status --porcelain
 if (-not $pending) {
-  Write-Host "No changes — data.js already up to date." -ForegroundColor Yellow
+  Write-Host "No changes - data.js already up to date." -ForegroundColor Yellow
   exit 0
 }
 

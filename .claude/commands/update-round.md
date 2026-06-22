@@ -8,18 +8,20 @@ A new batch of body-composition scale screenshots needs to be read, reviewed by
 the user, written into the spreadsheet, and published to the website (which
 updates the progress tracker, leaderboard, and race animation together).
 
-## Fixed paths
-- REPO (git working copy + scripts): `C:\Users\Admin\temp_esd\fat-and-muscle`
-- MEASUREMENTS root: `C:\Users\Admin\OneDrive\Claude Cowork\03_Projects\Fat and Muscle\Measurements`
-- SOURCE spreadsheet: `C:\Users\Admin\OneDrive\Claude Cowork\03_Projects\Fat and Muscle\Fat and Muscle\Fat_Muscle_Measurements.xlsx`
-- Name map: `<REPO>\name_map.json`
+## Fixed paths (post-AIOS-migration)
+- REPO (git working copy — build/commit/push happens here; OneDrive `.git` is virtualised so git won't run in the vault): `C:\Users\Admin\temp_esd\fat-and-muscle`
+- MEASUREMENTS root (new photos live here): `C:\Users\Admin\OneDrive\AIOS\areas\general\projects\fat-and-muscle\context\Measurements`
+- SOURCE spreadsheet (canonical source of truth): `C:\Users\Admin\OneDrive\AIOS\areas\general\projects\fat-and-muscle\scripts\data\Fat_Muscle_Measurements.xlsx`
+- Name map: `C:\Users\Admin\OneDrive\AIOS\areas\general\projects\fat-and-muscle\scripts\name_map.json`
+
+> `write_round.py` and `refresh.ps1` now default to the SOURCE spreadsheet above, so the `--xlsx` / `-Xlsx` flags are optional. `refresh.ps1` copies SOURCE into `<REPO>\data\`, rebuilds, commits, and pushes.
 
 User argument (may be empty): `$ARGUMENTS`
 
 ## Steps — follow in order
 
 ### 1. Pick the round + photo folder
-- List the subfolders of MEASUREMENTS. The existing ones are Baseline, "1st Progress", "2nd progress", "3rd progress", "4th progress".
+- List the subfolders of MEASUREMENTS (Baseline plus one `<Nth> progress` folder per round). Pick the highest-numbered progress folder not yet in the spreadsheet.
 - If `$ARGUMENTS` names a folder or a round number, use that. Otherwise choose the folder for the **next** round that is not yet in the spreadsheet (read the spreadsheet's sheet names with a quick `python` + openpyxl call, or infer from the highest existing "Nth Progress" sheet). Confirm the chosen folder + round number with the user in one short line before proceeding.
 - Determine the **round number** N from the folder name's leading ordinal (e.g. "5th progress" → 5).
 
