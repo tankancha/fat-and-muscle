@@ -112,7 +112,16 @@ const LATEST=R.LATEST;
 const A={};R.athletes.forEach(a=>A[a.name]=a);
 const baseOf=a=>({bf:a.stages[0].fat,mu:a.stages[0].muscle});
 const meas=(n,s)=>{const st=A[n].stages[s];return st&&st.present?{bf:st.fat,mu:st.muscle}:null;};
-const measuredNames=s=>NAMES.filter(n=>meas(n,s));
+const measuredNames=s=>NAMES.filter(n=>meas(n,s));       // truly measured (present)
+const hasReal=n=>A[n].stages.some((st,i)=>i>=1&&st.present);
+// Final round: fall back to an athlete's carried-forward last reading so anyone who ever
+// measured is never dropped (they missed the final but still appear with their last data).
+const measEff=(n,s)=>{const st=A[n].stages[s];if(!st)return null;if(st.present)return{bf:st.fat,mu:st.muscle,carried:false};if(s===LATEST&&st.fat!=null&&hasReal(n))return{bf:st.fat,mu:st.muscle,carried:true};return null;};
+const mget=(n,s)=>{if(s===LATEST)return measEff(n,s);const m=meas(n,s);return m?{bf:m.bf,mu:m.mu,carried:false}:null;};
+const partNames=s=>NAMES.filter(n=>mget(n,s));           // ranked participants (final incl. carried)
+const hasData=s=>measuredNames(s).length>0;              // did a real measurement round happen?
+const prevDataRound=s=>{for(let r=s-1;r>=1;r--)if(hasData(r))return r;return 0;};
+const rlabel=s=>((R.STAGE_FULL[s]||'').toLowerCase().startsWith('final')?'Final':'Round '+s);
 const CM=n=>A[n].style?A[n].style.color:'#707072';
 
 function sc(bf_from,mu_from,bf_to,mu_to){return+((bf_from-bf_to)+(mu_to-mu_from)).toFixed(2);}
@@ -139,10 +148,11 @@ function buildRankPanel(title,subtitle,badgeText,rows,naNote){
     const medals={1:'🥇',2:'🥈',3:'🥉'};
     const numDisplay=medals[rank]||`${rank}`;
     const tieBadge=isTie?`<span class="tie-b">Tie</span>`:'';
+    const carriedTag=r.carried?`<span class="tie-b" style="background:#FFF5F5;color:#D30005">carried fwd</span>`:'';
     const fatBarPct=barPct(r.fat_d,maxFat),muBarPct=barPct(r.mu_d,maxMu);
     const fatBarCol=r.fat_d>=0?'#007D48':'#D30005',muBarCol=r.mu_d>=0?'#1151FF':'#D30005';
     const fatColor=r.fat_d>=0?'#007D48':'#D30005',muColor=r.mu_d>=0?'#1151FF':'#D30005';
-    html+=`<div class="rank-row ${rowClass}">${ribbon}<div class="rr-num" style="color:${isFirst?'#111':isLast?'#D30005':'#707072'}">${numDisplay}</div><div class="avatar" style="background:${CM(r.name)}">${ini(r.name)}</div><div class="rr-name">${r.name}${tieBadge}<div class="rr-sub">${r.bf_from.toFixed(1)}% → ${r.bf_to.toFixed(1)}% fat</div></div><div class="rr-metrics"><div class="rr-metric"><div class="rr-metric-lbl">Fat</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${fatBarPct}%;background:${fatBarCol}"></div></div><div class="rr-delta" style="color:${fatColor}">${sgn(r.fat_d)}${f(r.fat_d)}</div></div><div class="rr-metric"><div class="rr-metric-lbl">Mu</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${muBarPct}%;background:${muBarCol}"></div></div><div class="rr-delta" style="color:${muColor}">${sgn(r.mu_d)}${f(r.mu_d)}</div></div></div><div class="rr-score"><div class="sv" style="color:${scolor(r.score)}">${sgn(r.score)}${f(Math.abs(r.score))}</div><div class="su">pp</div></div></div>`;
+    html+=`<div class="rank-row ${rowClass}">${ribbon}<div class="rr-num" style="color:${isFirst?'#111':isLast?'#D30005':'#707072'}">${numDisplay}</div><div class="avatar" style="background:${CM(r.name)}">${ini(r.name)}</div><div class="rr-name">${r.name}${tieBadge}${carriedTag}<div class="rr-sub">${r.bf_from.toFixed(1)}% → ${r.bf_to.toFixed(1)}% fat</div></div><div class="rr-metrics"><div class="rr-metric"><div class="rr-metric-lbl">Fat</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${fatBarPct}%;background:${fatBarCol}"></div></div><div class="rr-delta" style="color:${fatColor}">${sgn(r.fat_d)}${f(r.fat_d)}</div></div><div class="rr-metric"><div class="rr-metric-lbl">Mu</div><div class="rr-bar-track"><div class="rr-bar-fill" style="width:${muBarPct}%;background:${muBarCol}"></div></div><div class="rr-delta" style="color:${muColor}">${sgn(r.mu_d)}${f(r.mu_d)}</div></div></div><div class="rr-score"><div class="sv" style="color:${scolor(r.score)}">${sgn(r.score)}${f(Math.abs(r.score))}</div><div class="su">pp</div></div></div>`;
   });
   return html+`</div>`;
 }
@@ -170,8 +180,9 @@ function buildPodium(rows,heading){
 (function(){
   let h='';
   for(let st=0;st<=LATEST;st++){
+    if(st>=1&&st!==LATEST&&!hasData(st))continue; // skip fully-skipped rounds (e.g. round 7)
     const cls=st===LATEST?' r4':'';
-    const lbl=st===0?'Baseline':('Round '+st);
+    const lbl=st===0?'Baseline':rlabel(st);
     h+=`<div class="hbadge${cls}"><div class="hl">${lbl}</div><div class="hv">${R.STAGE_DATES[st]} 2026</div></div>`;
   }
   document.getElementById('hbadges').innerHTML=h;
@@ -179,29 +190,35 @@ function buildPodium(rows,heading){
 
 let html='';
 for(let st=LATEST;st>=1;st--){
-  const measured=measuredNames(st);
-  const n=NAMES.length, k=measured.length, absent=NAMES.filter(x=>!meas(x,st));
-  const isLatest=st===LATEST;
+  if(!hasData(st))continue; // skip fully-skipped rounds (e.g. round 7)
+  const measured=measuredNames(st);                        // truly measured (present)
+  const participants=partNames(st);                        // ranked (final round also includes carried-forward)
+  const carriedNames=participants.filter(x=>!measured.includes(x));
+  const absent=NAMES.filter(x=>!participants.includes(x)); // never measured -> not ranked
+  const n=NAMES.length, k=measured.length;
+  const isLatest=st===LATEST, rl=rlabel(st);
   const tag=isLatest?`<span class="latest-tag">Latest</span>`:'';
-  const sub=`${R.STAGE_DATES[st]} 2026 · ${k} of ${n} measured${absent.length?` · ${absent.length} absent`:''}`;
-  const vsBase=measured.map(name=>({name,bf_from:baseOf(A[name]).bf,mu_from:baseOf(A[name]).mu,bf_to:meas(name,st).bf,mu_to:meas(name,st).mu}));
+  const sub=`${R.STAGE_DATES[st]} 2026 · ${k} measured${carriedNames.length?` · ${carriedNames.length} carried fwd`:''}${absent.length?` · ${absent.length} absent`:''}`;
+  const vsBase=participants.map(name=>{const m=mget(name,st);return{name,carried:m.carried,bf_from:baseOf(A[name]).bf,mu_from:baseOf(A[name]).mu,bf_to:m.bf,mu_to:m.mu};});
+  const pr=prevDataRound(st);
   let vsPrev,prevNote=null;
-  if(st===1){ vsPrev=vsBase; }
+  if(pr===0){ vsPrev=vsBase.map(r=>({...r})); }
   else{
-    const havePrev=measured.filter(name=>meas(name,st-1));
-    const noPrev=measured.filter(name=>!meas(name,st-1));
-    vsPrev=havePrev.map(name=>({name,bf_from:meas(name,st-1).bf,mu_from:meas(name,st-1).mu,bf_to:meas(name,st).bf,mu_to:meas(name,st).mu}));
-    if(noPrev.length)prevNote=`${noPrev.join(', ')} skipped R${st-1} — excluded from R${st-1}→R${st} ranking`;
+    const havePrev=participants.filter(name=>meas(name,pr));
+    const noPrev=participants.filter(name=>!meas(name,pr));
+    vsPrev=havePrev.map(name=>{const t=mget(name,st);return{name,carried:t.carried,bf_from:meas(name,pr).bf,mu_from:meas(name,pr).mu,bf_to:t.bf,mu_to:t.mu};});
+    if(noPrev.length)prevNote=`${noPrev.join(', ')} — no ${rlabel(pr)} reading to compare`;
   }
-  html+=`<div class="round-block"><div class="round-header${isLatest?' latest':''}"><div><h2>Round ${st}${tag}</h2><div class="sub">${sub}</div></div><div class="round-count-badge">${k} / ${n} measured</div></div>`;
-  html+=buildPodium(vsBase,`Round ${st} podium — cumulative vs baseline`);
+  const cbadge=`${k}${carriedNames.length?`+${carriedNames.length}`:''} / ${n} measured`;
+  html+=`<div class="round-block"><div class="round-header${isLatest?' latest':''}"><div><h2>${rl}${tag}</h2><div class="sub">${sub}</div></div><div class="round-count-badge">${cbadge}</div></div>`;
+  html+=buildPodium(vsBase,`${rl} podium — cumulative vs baseline`);
   html+=`<div class="rank-cols">`;
-  const prevTitle=st===1?'vs Previous (= baseline)':`vs Previous (R${st-1}→R${st})`;
-  const prevSub=st===1?'First round — same as vs baseline':`Improvement made in Round ${st}`;
-  html+=buildRankPanel(prevTitle,prevSub,st===1?'Baseline':`R${st-1}→R${st}`,vsPrev,prevNote);
+  const prevTitle=pr===0?'vs Previous (= baseline)':`vs Previous (${rlabel(pr)}→${rl})`;
+  const prevSub=pr===0?'First round — same as vs baseline':`Improvement since ${rlabel(pr)}`;
+  html+=buildRankPanel(prevTitle,prevSub,pr===0?'Baseline':`${rlabel(pr)}→${rl}`,vsPrev,prevNote);
   html+=buildRankPanel('vs Baseline (cumulative)',`Total change from ${R.STAGE_DATES[0]} 2026`,'vs Base',vsBase,null);
   html+=`</div>`;
-  html+=missedChips(absent,`Absent Round ${st}`);
+  html+=missedChips(absent,`Never measured`);
   html+=`</div>`;
 }
 document.getElementById('leaderboard').innerHTML=html;

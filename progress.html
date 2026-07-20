@@ -130,8 +130,15 @@ const muColor =r=>MU_RAMP[(r-1)%MU_RAMP.length];
 const A={}; R.athletes.forEach(a=>A[a.name]=a);
 const baseOf=a=>({bf:a.stages[0].fat,mu:a.stages[0].muscle});
 const meas=(a,s)=>{const st=a.stages[s];return st&&st.present?{bf:st.fat,mu:st.muscle}:null;};
+const hasReal=a=>a.stages.some((st,i)=>i>=1&&st.present);
+// Final round: fall back to the carried-forward last reading so anyone who ever measured is never dropped.
+const measEff=(a,s)=>{const st=a.stages[s];if(!st)return null;if(st.present)return{bf:st.fat,mu:st.muscle,carried:false};if(s===LATEST&&st.fat!=null&&hasReal(a))return{bf:st.fat,mu:st.muscle,carried:true};return null;};
+const mget=(a,s)=>{if(s===LATEST)return measEff(a,s);const m=meas(a,s);return m?{bf:m.bf,mu:m.mu,carried:false}:null;};
 const lastMeas=a=>{for(let s=LATEST;s>=1;s--){const m=meas(a,s);if(m)return m;}return baseOf(a);};
-const measuredNames=s=>NAMES.filter(n=>meas(A[n],s));
+const measuredNames=s=>NAMES.filter(n=>meas(A[n],s));       // truly measured (present)
+const partNames=s=>NAMES.filter(n=>mget(A[n],s));           // final round also includes carried-forward
+const hasData=s=>measuredNames(s).length>0;                 // did a real measurement round happen?
+const rlabel=s=>((R.STAGE_FULL[s]||'').toLowerCase().startsWith('final')?'Final':'Round '+s);
 const mean=arr=>arr.reduce((x,y)=>x+y,0)/arr.length;
 const avColor=n=>A[n].style?A[n].style.color:'#707072';
 
@@ -145,37 +152,44 @@ function ini(n){return n.substring(0,2).toUpperCase();}
 (function(){
   let h='';
   for(let s=0;s<=LATEST;s++){
+    if(s>=1&&s!==LATEST&&!hasData(s))continue; // skip fully-skipped rounds (e.g. round 7)
     const cls=s===LATEST?' latest':'';
-    const lbl=s===0?'Baseline':('Round '+s);
+    const lbl=s===0?'Baseline':rlabel(s);
     h+=`<div class="date-badge${cls}"><div class="lb">${lbl}</div><div class="vl">${R.STAGE_DATES[s]} 2026</div></div>`;
   }
   document.getElementById('header-dates').innerHTML=h;
 })();
 
 (function(){
-  const measured=measuredNames(LATEST);
+  const measured=measuredNames(LATEST);                    // averages use truly-measured readings only
+  const carried=partNames(LATEST).filter(n=>!measured.includes(n));
+  const absent=NAMES.filter(n=>!partNames(LATEST).includes(n)).length;
   const dFat=mean(measured.map(n=>meas(A[n],LATEST).bf-baseOf(A[n]).bf));
   const dMu =mean(measured.map(n=>meas(A[n],LATEST).mu-baseOf(A[n]).mu));
-  const absent=NAMES.length-measured.length;
+  const rl=rlabel(LATEST);
+  const cSub=`${R.STAGE_DATES[LATEST]} 2026${carried.length?` · ${carried.length} carried fwd`:''}${absent?` · ${absent} absent`:''}`;
   document.getElementById('summary-strip').innerHTML=`
     <div class="sc"><div class="sc-label">Total Enrolled</div><div class="sc-val">${NAMES.length}</div><div class="sc-sub">Baseline participants</div></div>
-    <div class="sc"><div class="sc-label">Round ${LATEST} Measured</div><div class="sc-val">${measured.length}</div><div class="sc-sub">${R.STAGE_DATES[LATEST]} 2026 · ${absent} absent</div></div>
-    <div class="sc"><div class="sc-label">Avg Body Fat Δ R${LATEST}</div><div class="sc-val">${sign(dFat)}${Math.abs(dFat).toFixed(2)}</div><div class="sc-sub">pp vs baseline · ${measured.length} pax</div></div>
-    <div class="sc"><div class="sc-label">Avg Muscle Δ R${LATEST}</div><div class="sc-val">${sign(dMu)}${Math.abs(dMu).toFixed(2)}</div><div class="sc-sub">pp vs baseline · ${measured.length} pax</div></div>`;
+    <div class="sc"><div class="sc-label">${rl} Measured</div><div class="sc-val">${measured.length}</div><div class="sc-sub">${cSub}</div></div>
+    <div class="sc"><div class="sc-label">Avg Body Fat Δ ${rl}</div><div class="sc-val">${sign(dFat)}${Math.abs(dFat).toFixed(2)}</div><div class="sc-sub">pp vs baseline · ${measured.length} pax</div></div>
+    <div class="sc"><div class="sc-label">Avg Muscle Δ ${rl}</div><div class="sc-val">${sign(dMu)}${Math.abs(dMu).toFixed(2)}</div><div class="sc-sub">pp vs baseline · ${measured.length} pax</div></div>`;
 })();
 
 (function(){
   let h='<strong>Legend</strong>';
+  const rleg=s=>rlabel(s)==='Final'?'Final':'R'+s;
   h+='<div class="legend-item"><div class="lswatch" style="background:#CACACB"></div>Baseline</div>';
-  for(let s=1;s<=LATEST;s++)h+=`<div class="legend-item"><div class="lswatch" style="background:${fatColor(s)}"></div>R${s} Fat</div>`;
-  for(let s=1;s<=LATEST;s++)h+=`<div class="legend-item"><div class="lswatch" style="background:${muColor(s)}"></div>R${s} Muscle</div>`;
+  for(let s=1;s<=LATEST;s++){if(!hasData(s))continue;h+=`<div class="legend-item"><div class="lswatch" style="background:${fatColor(s)}"></div>${rleg(s)} Fat</div>`;}
+  for(let s=1;s<=LATEST;s++){if(!hasData(s))continue;h+=`<div class="legend-item"><div class="lswatch" style="background:${muColor(s)}"></div>${rleg(s)} Muscle</div>`;}
   document.getElementById('legend').innerHTML=h;
 })();
 
 (function(){
   let h='';
   for(let s=1;s<=LATEST;s++){
+    if(!hasData(s))continue; // skip fully-skipped rounds (e.g. round 7)
     const m=measuredNames(s);
+    const rl=rlabel(s), rs=rl==='Final'?'Final':'R'+s;
     const baseFat=mean(m.map(n=>baseOf(A[n]).bf)), roundFat=mean(m.map(n=>meas(A[n],s).bf));
     const baseMu =mean(m.map(n=>baseOf(A[n]).mu)), roundMu =mean(m.map(n=>meas(A[n],s).mu));
     const dF=roundFat-baseFat, dM=roundMu-baseMu;
@@ -183,14 +197,14 @@ function ini(n){return n.substring(0,2).toUpperCase();}
     const fGood='background:#DFFFE9;color:#007D48', fBad='background:#FFE5E5;color:#D30005';
     const mGood='background:#D6EEFF;color:#1151FF', mBad='background:#FFE5E5;color:#D30005';
     h+=`<div>
-      <div class="avg-round-title">Round ${s} · ${R.STAGE_DATES[s]} (${m.length} pax)</div>
+      <div class="avg-round-title">${rl} · ${R.STAGE_DATES[s]} (${m.length} pax)</div>
       <div class="avg-row"><div class="avg-dot" style="background:#CACACB"></div><div class="avg-lbl">Base Fat</div><div class="avg-val">${baseFat.toFixed(2)}%</div></div>
       <div class="avg-bar-wrap"><div class="avg-bar-fill" style="width:${(baseFat*2).toFixed(1)}%;background:#CACACB"></div></div>
-      <div class="avg-row"><div class="avg-dot" style="background:${fc}"></div><div class="avg-lbl">R${s} Fat</div><div class="avg-val">${roundFat.toFixed(2)}%</div><div class="avg-delta" style="${dF<=0?fGood:fBad}">${sign(dF)}${Math.abs(dF).toFixed(2)} pp</div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:${fc}"></div><div class="avg-lbl">${rs} Fat</div><div class="avg-val">${roundFat.toFixed(2)}%</div><div class="avg-delta" style="${dF<=0?fGood:fBad}">${sign(dF)}${Math.abs(dF).toFixed(2)} pp</div></div>
       <div class="avg-bar-wrap" style="margin-bottom:12px"><div class="avg-bar-fill" style="width:${(roundFat*2).toFixed(1)}%;background:${fc}"></div></div>
       <div class="avg-row"><div class="avg-dot" style="background:#CACACB"></div><div class="avg-lbl">Base Muscle</div><div class="avg-val">${baseMu.toFixed(2)}%</div></div>
       <div class="avg-bar-wrap"><div class="avg-bar-fill" style="width:${baseMu.toFixed(1)}%;background:#CACACB"></div></div>
-      <div class="avg-row"><div class="avg-dot" style="background:${mc}"></div><div class="avg-lbl">R${s} Muscle</div><div class="avg-val">${roundMu.toFixed(2)}%</div><div class="avg-delta" style="${dM>=0?mGood:mBad}">${sign(dM)}${Math.abs(dM).toFixed(2)} pp</div></div>
+      <div class="avg-row"><div class="avg-dot" style="background:${mc}"></div><div class="avg-lbl">${rs} Muscle</div><div class="avg-val">${roundMu.toFixed(2)}%</div><div class="avg-delta" style="${dM>=0?mGood:mBad}">${sign(dM)}${Math.abs(dM).toFixed(2)} pp</div></div>
       <div class="avg-bar-wrap"><div class="avg-bar-fill" style="width:${roundMu.toFixed(1)}%;background:${mc}"></div></div>
     </div>`;
   }
@@ -208,21 +222,25 @@ function getBadge(a){
 }
 function buildCard(a){
   const name=a.name,color=avColor(name),b=baseOf(a);
-  const rounds=[];for(let s=1;s<=LATEST;s++){const m=meas(a,s);if(m)rounds.push({s,...m});}
+  const rounds=[];for(let s=1;s<=LATEST;s++){const m=mget(a,s);if(m)rounds.push({s,...m});}
   const[badgeClass,badgeText]=getBadge(a);
-  const subtitle=rounds.length?rounds.map(r=>'R'+r.s).join(' + ')+' measured':'Pending';
+  const rsh=s=>rlabel(s)==='Final'?'Final':'R'+s;
+  const realR=rounds.filter(r=>!r.carried).map(r=>rsh(r.s));
+  const carR=rounds.filter(r=>r.carried).map(r=>rsh(r.s));
+  const subtitle=(realR.length?realR.join(' + ')+' measured':'Pending')+(carR.length?` · ${carR.join(', ')} carried fwd`:'');
   const allBF=[b.bf,...rounds.map(r=>r.bf)],allMu=[b.mu,...rounds.map(r=>r.mu)];
   const bfMin=Math.min(...allBF)-1.5,bfMax=Math.max(...allBF)+1.5;
   const muMin=Math.min(...allMu)-1.5,muMax=Math.max(...allMu)+1.5;
-  function bar(val,clr,mn,mx){const pct=bw(val,mn,mx);const ins=pct>30;return`<div class="bar-outer"><div class="bar-inner" style="width:${pct}%;background:${clr}">${ins?`<span class="bar-value">${val.toFixed(1)}%</span>`:''}</div>${!ins?`<span style="position:absolute;left:calc(${pct}% + 4px);top:3px;font-size:9px;font-weight:700;color:${clr}">${val.toFixed(1)}%</span>`:''}</div>`;}
+  function bar(val,clr,mn,mx,carried){const pct=bw(val,mn,mx);const ins=pct>30;const cs=carried?';opacity:.5;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.55) 0 3px,transparent 3px 6px)':'';return`<div class="bar-outer"><div class="bar-inner" style="width:${pct}%;background:${clr}${cs}">${ins?`<span class="bar-value">${val.toFixed(1)}%</span>`:''}</div>${!ins?`<span style="position:absolute;left:calc(${pct}% + 4px);top:3px;font-size:9px;font-weight:700;color:${clr}">${val.toFixed(1)}%</span>`:''}</div>`;}
   const firstRound=rounds.length?rounds[0].s:0;
-  const skipNote=(firstRound>1)?`<div class="skip-note">First measured at Round ${firstRound} — deltas are vs baseline</div>`:'';
-  let bfRows=`<div class="bar-row"><div class="bar-row-label">Baseline</div>${bar(b.bf,'#CACACB',bfMin,bfMax)}<div class="delta-tag dt-n" style="visibility:hidden">—</div></div>`;
-  let muRows=`<div class="bar-row"><div class="bar-row-label">Baseline</div>${bar(b.mu,'#CACACB',muMin,muMax)}<div class="delta-tag dt-n" style="visibility:hidden">—</div></div>`;
+  const skipNote=(firstRound>1)?`<div class="skip-note">First measured at ${rlabel(firstRound)} — deltas are vs baseline</div>`:'';
+  let bfRows=`<div class="bar-row"><div class="bar-row-label">Baseline</div>${bar(b.bf,'#CACACB',bfMin,bfMax,false)}<div class="delta-tag dt-n" style="visibility:hidden">—</div></div>`;
+  let muRows=`<div class="bar-row"><div class="bar-row-label">Baseline</div>${bar(b.mu,'#CACACB',muMin,muMax,false)}<div class="delta-tag dt-n" style="visibility:hidden">—</div></div>`;
   rounds.forEach(r=>{
     const df=+(r.bf-b.bf).toFixed(2),dm=+(r.mu-b.mu).toFixed(2);
-    bfRows+=`<div class="bar-row"><div class="bar-row-label">Round ${r.s}</div>${bar(r.bf,fatColor(r.s),bfMin,bfMax)}<div class="delta-tag ${dpFat(df)}">${dpTxt(df)} pp</div></div>`;
-    muRows+=`<div class="bar-row"><div class="bar-row-label">Round ${r.s}</div>${bar(r.mu,muColor(r.s),muMin,muMax)}<div class="delta-tag ${dpMu(dm)}">${dpTxt(dm)} pp</div></div>`;
+    const lbl=`${rsh(r.s)}${r.carried?'<span style="color:#707072">*</span>':''}`;
+    bfRows+=`<div class="bar-row"><div class="bar-row-label">${lbl}</div>${bar(r.bf,fatColor(r.s),bfMin,bfMax,r.carried)}<div class="delta-tag ${dpFat(df)}">${dpTxt(df)} pp</div></div>`;
+    muRows+=`<div class="bar-row"><div class="bar-row-label">${lbl}</div>${bar(r.mu,muColor(r.s),muMin,muMax,r.carried)}<div class="delta-tag ${dpMu(dm)}">${dpTxt(dm)} pp</div></div>`;
   });
   return`<div class="person-card">
   <div class="card-header">
@@ -250,13 +268,15 @@ function buildMissedCard(a){
 </div>`;}
 
 (function(){
-  const measured=measuredNames(LATEST).sort((a,b)=>a.localeCompare(b));
-  const pending=NAMES.filter(n=>!meas(A[n],LATEST)).sort((a,b)=>a.localeCompare(b));
-  document.getElementById('measured-title').innerHTML=`Round ${LATEST} Measured <span>— ${measured.length} athletes · ${R.STAGE_DATES[LATEST]} 2026</span>`;
-  document.getElementById('cards-measured').innerHTML=measured.map(n=>buildCard(A[n])).join('');
-  document.getElementById('absent-title').innerHTML=`Absent Round ${LATEST} <span>— not measured on ${R.STAGE_DATES[LATEST]} 2026</span>`;
-  document.getElementById('cards-pending').innerHTML=pending.map(n=>buildMissedCard(A[n])).join('') || '<div style="font-size:12px;color:#707072;padding:6px">Everyone measured this round.</div>';
-  document.getElementById('footer').innerHTML=`Mija Body Composition Scale S400 &nbsp;·&nbsp; ${R.STAGE_DATES[0]} – ${R.STAGE_DATES[LATEST]} 2026 &nbsp;·&nbsp; ${NAMES.length} athletes`;
+  const shown=partNames(LATEST).sort((a,b)=>a.localeCompare(b));           // measured + carried-forward
+  const pending=NAMES.filter(n=>!partNames(LATEST).includes(n)).sort((a,b)=>a.localeCompare(b)); // never measured
+  const rl=rlabel(LATEST);
+  const nMeasured=measuredNames(LATEST).length, nCarried=shown.length-nMeasured;
+  document.getElementById('measured-title').innerHTML=`${rl} Standings <span>— ${shown.length} athletes${nCarried?` (${nMeasured} measured + ${nCarried} carried fwd*)`:''} · ${R.STAGE_DATES[LATEST]} 2026</span>`;
+  document.getElementById('cards-measured').innerHTML=shown.map(n=>buildCard(A[n])).join('');
+  document.getElementById('absent-title').innerHTML=pending.length?`Never Measured <span>— no readings recorded across the challenge</span>`:'';
+  document.getElementById('cards-pending').innerHTML=pending.map(n=>buildMissedCard(A[n])).join('');
+  document.getElementById('footer').innerHTML=`Mija Body Composition Scale S400 &nbsp;·&nbsp; ${R.STAGE_DATES[0]} – ${R.STAGE_DATES[LATEST]} 2026 &nbsp;·&nbsp; ${NAMES.length} athletes &nbsp;·&nbsp; * carried forward from last measurement`;
 })();
 </script>
 </body>
